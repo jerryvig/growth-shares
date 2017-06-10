@@ -83,9 +83,8 @@ MorningstarCollector.prototype.insertResultData = function(years,
             db.run('COMMIT');
             db.close();
             var endTime = process.hrtime();
-            var insertTime = getHrTimeDiffMilliseconds(startTime, endTime);
             console.log('Results insertion completed for %s in %f ms.',
-                this.currentTicker, insertTime);
+                this.currentTicker, getHrTimeDiffMilliseconds(startTime, endTime));
             this.getNextTicker();
         });
     });
@@ -184,10 +183,11 @@ function loadMorningstarData() {
 }
 
 function TickerListLoader(exchanges, resolver) {
-	this.tickerList = [];
+	this.tickerRows = [];
 	this.exchanges = exchanges;
+    this.currentExchange = null;
 	this.resolver = resolver;
-	this.count = 0;
+	this.exchangeCount = 0;
 	this.tickerCount = 0;
 	this.rawData = '';
 }
@@ -196,23 +196,22 @@ TickerListLoader.prototype.handleResponseData = function(chunk) {
 	this.rawData += chunk;
 };
 
-TickerListLoader.prototype.insertTickers = function() {
-	console.log(`Inserting ${this.tickerList.length} tickers into db.`);
+TickerListLoader.prototype.insertRows = function() {
+	console.log(`Inserting ${this.tickerRows.length} tickers into db.`);
 	var startTime = process.hrtime();
 	var db = new sqlite3.Database(DB_FILE_NAME);
 	db.run('BEGIN');
-	var stmt = db.prepare('INSERT INTO ticker_list VALUES (?)');
-	for (var i=0; i<this.tickerList.length; i++) {
-		stmt.run(this.tickerList[i]);
+	var stmt = db.prepare('INSERT INTO ticker_list VALUES (?, ?, ?)');
+	for (var i=0; i<this.tickerRows.length; i++) {
+		stmt.run(this.tickerRows[i].ticker, this.tickerRows[i].companyName, this.tickerRows[i].exchange);
 	}
 	console.log('Running SQL ', stmt, '.');
 	stmt.finalize(() => {
 		db.run('COMMIT');
 		db.close();
 		var endTime = process.hrtime();
-		console.log('Inserted %d tickers in %f ms.', this.tickerList.length,
+		console.log('Inserted %d tickers in %f ms.', this.tickerRows.length,
             getHrTimeDiffMilliseconds(startTime, endTime));
-		this.tickerList = [];
 		this.getNextExchange();
 	});
 };
@@ -228,23 +227,31 @@ TickerListLoader.prototype.checkNoBadStrs = function(tickerString) {
 };
 
 TickerListLoader.prototype.handleResponseEnd = function(rawData) {
-	console.log('Processing nasdaq response end event. Appending tickers.');
-	var lines = this.rawData.split('\n');
-	for (var line of lines) {
-		var cols = line.split(',');
-		var ticker = cols[0].replace(/"/g, '').trim();
-		if (ticker.length > 0 && this.checkNoBadStrs(ticker)) {
-			this.tickerList.push(ticker);
-			this.tickerCount++;
-		}
-	}
+    console.log('Processing nasdaq response end event. Appending tickers.');
+    var lines = this.rawData.split('\n');
+    for (var line of lines) {
+        var cols = line.split(',');
+        var ticker = cols[0].replace(/"/g, '').trim();
+        var companyName = '';
+        if (cols.length > 1) {
+            companyName = cols[1].replace(/"/g, '').trim();
+        }
+        if (ticker.length > 0 && this.checkNoBadStrs(ticker)) {
+            this.tickerRows.push({
+                'ticker': ticker,
+                'companyName': companyName,
+                'exchange': this.currentExchange
+            });
+            console.log('companyName = ' + companyName);
+            this.tickerCount++;
+        }
+    }
 
-	if (this.tickerList.length > 0) {
-		this.insertTickers();
-	} else {
-		this.tickerList = [];
-		this.getNextExchange();
-	}
+    if (this.tickerRows.length > 0) {
+        this.insertRows();
+    } else {
+        this.getNextExchange();
+    }
 };
 
 TickerListLoader.prototype.handleNasdaqResponse = function(response) {
@@ -254,32 +261,37 @@ TickerListLoader.prototype.handleNasdaqResponse = function(response) {
 		return;
 	}
 
+    this.rawData = '';
 	response.on('data', this.handleResponseData.bind(this));
 	response.on('end', this.handleResponseEnd.bind(this));
 };
 
 TickerListLoader.prototype.getNextExchange = function() {
-	if (this.count === 0) {
+	if (this.exchangeCount === 0) {
 		console.log(`Loading ticker lists from exchanges ${this.exchanges.join(', ')}.`);
 	}
 
+    console.log('Clearing ticker list row data.');
+    this.rawData = '';
+    this.tickerRows = [];
 	var nextExchange = this.exchanges.shift();
+    this.currentExchange = nextExchange;
 	if (nextExchange === undefined) {
-		console.log('Finished loading %s tickers for %s exchanges.', this.tickerCount, this.count);
+		console.log('Finished loading %s tickers for %s exchanges.', this.tickerCount, this.exchangeCount);
 		console.log('Calling promise resolver for TickerListLoader.');
 		this.resolver();
 		return;
 	}
 
 	console.log(`------------------------\nLoading data for exchange ${nextExchange}.`);
-	if (this.count === 0) {
+	if (this.exchangeCount === 0) {
 		http.get(NASDAQ_TICKERS_URL + nextExchange, this.handleNasdaqResponse.bind(this));
 	} else {
 		setTimeout(() => {
 			http.get(NASDAQ_TICKERS_URL + nextExchange, this.handleNasdaqResponse.bind(this));
 		}, THROTTLE_DELAY);
 	}
-	this.count++;
+	this.exchangeCount++;
 };
 
 function getHrTimeDiffMilliseconds(startTime, endTime) {
@@ -294,7 +306,7 @@ function initializeDatabase() {
 		'DROP TABLE IF EXISTS ticker_list',
 		'CREATE TABLE years ( ticker TEXT, year_index TEXT, year TEXT )',
 		'CREATE TABLE revenue ( ticker TEXT, year_index TEXT, revenue INTEGER )',
-		'CREATE TABLE ticker_list ( ticker TEXT )'
+		'CREATE TABLE ticker_list ( ticker TEXT, company_name TEXT, exchange TEXT )'
 	];
 	console.log('Opening database %s for initialization.', DB_FILE_NAME);
 	var db = new sqlite3.Database(DB_FILE_NAME);
@@ -320,7 +332,7 @@ function initializeDatabase() {
 
 function loadTickerLists() {
     return new Promise((resolve, reject) => {
-        var tickerLoader = new TickerListLoader(['nasdaq'], resolve);
+        var tickerLoader = new TickerListLoader(['amex', 'nasdaq', 'nyse'], resolve);
         tickerLoader.getNextExchange();
     });
 }
@@ -329,16 +341,16 @@ function main(args) {
     var startTime = process.hrtime();
     initializeDatabase()
         .then(loadTickerLists)
-        .then(loadMorningstarData)
+      //  .then(loadMorningstarData)
         .then(() => {
             var endTime = process.hrtime();
-            console.log('Morningstar data collection completed in %fs.', getHrTimeDiffMilliseconds(startTime, endTime));
+            console.log('Morningstar data collection completed in %f s.', getHrTimeDiffMilliseconds(startTime, endTime)/1000);
         });
 	/* initializeDatabase()
 		.then(loadTickerLists)
 		.then(() => {
 			var endTime = process.hrtime();
-			console.log('Finished loading ticker lists in %fs.', getHrTimeDiffMilliseconds(startTime, endTime));
+			console.log('Finished loading ticker lists in %f ms.', getHrTimeDiffMilliseconds(startTime, endTime));
 		}); */
 	//initializeDatabase().then(() => { console.log('done')});
 }
