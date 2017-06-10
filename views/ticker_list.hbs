@@ -1,10 +1,11 @@
 <table style="margin:0 auto;">
 	<thead>
-		<tr><th>Symbol</th><th>Company Name</th></tr>
+		<tr><th colspan="4">AMEX Ticker List</th></tr>
+		<tr><th></th><th>Symbol</th><th>Company Name</th><th>Exchange</th></tr>
 	</thead>
 	<tbody>
 		{{#each tickerRows}}
-			<tr><td> {{ticker}} </td><td> {{companyName}} </td><td> {{exchange}} </td></tr>
+			<tr><td> {{index}} </td><td> {{ticker}} </td><td> {{companyName}} </td><td> {{exchange}} </td></tr>
 		{{/each}}
 	</tbody>
 </table>

@@ -16,6 +16,7 @@ function fetchTickersListFromDb(response) {
     db.all('SELECT DISTINCT ticker, company_name, exchange FROM ticker_list ORDER BY ticker ASC', (err, rows) => {
         for (var i=0; i<rows.length; i++) {
             tickerRows.push({
+                'index': i+1,
                 'ticker': rows[i].ticker,
                 'companyName': rows[i].company_name,
                 'exchange': rows[i].exchange.charAt(0).toUpperCase() + rows[i].exchange.slice(1)
@@ -26,7 +27,7 @@ function fetchTickersListFromDb(response) {
         console.log('Read %d ticker symbols from the database in %f ms.', i,
             getHrTimeDiffMilliseconds(start, end));
         //response.json(tickerRows);
-        response.render('ticker_list', {'tickerRows': tickerRows});
+        response.render('ticker_list', {'title': 'AMEX Ticker List', 'tickerRows': tickerRows});
     });
 }
 
