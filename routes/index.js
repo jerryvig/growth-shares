@@ -52,7 +52,7 @@ function computeRevenueGrowth(request, response, next) {
             revenueGrowthRecords[ticker]['Y_2'] = (revenueRecords[ticker]['Y_2'] - revenueRecords[ticker]['Y_1'])/revenueRecords[ticker]['Y_1'];
         }
 
-        db.run('DROP TABLE IF EXISTS revenue_growth', () =>{
+        db.run('DROP TABLE IF EXISTS revenue_growth', () => {
             db.run('CREATE TABLE revenue_growth ( ticker TEXT, y2 REAL, y3 REAL, y4 REAL, y5 REAL, y6 REAL )', () => {
                 var insertStatement = db.prepare('INSERT INTO revenue_growth VALUES (?, ?, ?, ?, ?, ?)');
                 for (var symbol in revenueGrowthRecords) {
