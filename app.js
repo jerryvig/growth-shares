@@ -12,6 +12,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+// using handlebars view engine.
 app.set('view engine', 'hbs');
 
 // uncomment after placing your favicon in /public
