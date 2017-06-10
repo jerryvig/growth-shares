@@ -299,35 +299,37 @@ function getHrTimeDiffMilliseconds(startTime, endTime) {
 }
 
 function initializeDatabase() {
-	var startTime = process.hrtime();
-	var ddl_statments = [
-		'DROP TABLE IF EXISTS years',
-		'DROP TABLE IF EXISTS revenue',
-		'DROP TABLE IF EXISTS ticker_list',
-		'CREATE TABLE years ( ticker TEXT, year_index TEXT, year TEXT )',
-		'CREATE TABLE revenue ( ticker TEXT, year_index TEXT, revenue INTEGER )',
-		'CREATE TABLE ticker_list ( ticker TEXT, company_name TEXT, exchange TEXT )'
-	];
-	console.log('Opening database %s for initialization.', DB_FILE_NAME);
-	var db = new sqlite3.Database(DB_FILE_NAME);
-	db.run('BEGIN');
-	return new Promise((resolve, reject) => {
-		function runNextStatment() {
-			var nextStmt = ddl_statments.shift();
-			if (nextStmt === undefined) {
-				db.run('COMMIT');
-				db.close();
-				var endTime = process.hrtime();
-				console.log('Finished executing schema drop and creation statements in %f ms.',
+    var startTime = process.hrtime();
+    var ddl_statments = [
+        'DROP TABLE IF EXISTS years',
+        'DROP TABLE IF EXISTS revenue',
+        'DROP TABLE IF EXISTS ticker_list',
+        'CREATE TABLE years ( ticker TEXT, year_index TEXT, year TEXT )',
+        'CREATE TABLE revenue ( ticker TEXT, year_index TEXT, revenue INTEGER )',
+        'CREATE TABLE ticker_list ( ticker TEXT, company_name TEXT, exchange TEXT )',
+        'CREATE INDEX ticker_list_ticker_index ON ticker_list (ticker)',
+        'CREATE INDEX revenue_ticker_index ON revenue (ticker)'
+    ];
+    console.log('Opening database %s for initialization.', DB_FILE_NAME);
+    var db = new sqlite3.Database(DB_FILE_NAME);
+    db.run('BEGIN');
+    return new Promise((resolve, reject) => {
+        function runNextStatment() {
+            var nextStmt = ddl_statments.shift();
+            if (nextStmt === undefined) {
+                db.run('COMMIT');
+                db.close();
+                var endTime = process.hrtime();
+                console.log('Finished executing schema drop and creation statements in %f ms.',
                     getHrTimeDiffMilliseconds(startTime, endTime));
-				resolve();
-				return;
-			}
-			console.log(`Running SQL statement: "${nextStmt}".`);
-			db.run(nextStmt, runNextStatment);
-		}
-		runNextStatment();
-	});
+                resolve();
+                return;
+            }
+            console.log(`Running SQL statement: "${nextStmt}".`);
+            db.run(nextStmt, runNextStatment);
+        }
+        runNextStatment();
+    });
 }
 
 function loadTickerLists() {
