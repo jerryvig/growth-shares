@@ -54,12 +54,17 @@ function computeRevenueGrowth(request, response, next) {
 
         db.run('DROP TABLE IF EXISTS revenue_growth', () => {
             db.run('CREATE TABLE revenue_growth ( ticker TEXT, y2 REAL, y3 REAL, y4 REAL, y5 REAL, y6 REAL )', () => {
+                var start = process.hrtime();
+                db.run('BEGIN');
                 var insertStatement = db.prepare('INSERT INTO revenue_growth VALUES (?, ?, ?, ?, ?, ?)');
                 for (var symbol in revenueGrowthRecords) {
                     insertStatement.run(symbol, revenueGrowthRecords[symbol]['Y_2'], revenueGrowthRecords[symbol]['Y_3'], revenueGrowthRecords[symbol]['Y_4'], revenueGrowthRecords[symbol]['Y_5'], revenueGrowthRecords[symbol]['Y_6']  );
                 }
                 insertStatement.finalize(() => {
+                    db.run('COMMIT');
                     db.close();
+                    var end = process.hrtime();
+                    console.log('Inserted revenue growth records in %f ms.', getHrTimeDiffMilliseconds(start, end));
                     response.json(revenueGrowthRecords);
                 });
             });
