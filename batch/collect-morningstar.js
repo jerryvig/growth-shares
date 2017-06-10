@@ -159,7 +159,7 @@ MorningstarCollector.prototype.readTickersFromDatabase = function() {
 	console.log('Reading ticker list from database %s.', DB_FILE_NAME);
 	return new Promise((resolve, reject) => {
 		var db = new sqlite3.Database(DB_FILE_NAME);
-		db.all('SELECT ticker FROM ticker_list ORDER BY ticker ASC', (err, rows) => {
+		db.all('SELECT DISTINCT ticker FROM ticker_list ORDER BY ticker ASC', (err, rows) => {
 			var ticker_count = 0;
 			for (row of rows) {
 				ticker_count++;
@@ -332,7 +332,7 @@ function initializeDatabase() {
 
 function loadTickerLists() {
     return new Promise((resolve, reject) => {
-        var tickerLoader = new TickerListLoader(['amex', 'nasdaq', 'nyse'], resolve);
+        var tickerLoader = new TickerListLoader(['amex'], resolve);
         tickerLoader.getNextExchange();
     });
 }
@@ -341,7 +341,7 @@ function main(args) {
     var startTime = process.hrtime();
     initializeDatabase()
         .then(loadTickerLists)
-      //  .then(loadMorningstarData)
+        .then(loadMorningstarData)
         .then(() => {
             var endTime = process.hrtime();
             console.log('Morningstar data collection completed in %f s.', getHrTimeDiffMilliseconds(startTime, endTime)/1000);
