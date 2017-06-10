@@ -1,0 +1,10 @@
+<table style="margin:0 auto;">
+	<thead>
+		<tr><th>Symbol</th><th>Company Name</th></tr>
+	</thead>
+	<tbody>
+		{{#each tickerRows}}
+			<tr><td> {{ticker}} </td><td> {{companyName}} </td><td> {{exchange}} </td></tr>
+		{{/each}}
+	</tbody>
+</table>
