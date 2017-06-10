@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
 
-const PAGE_TITLE = 'Growth Shares'
+const PAGE_TITLE = 'Growth Shares';
 const DB_FILE_NAME = 'morningstar_data.sqlite3';
 
 function getHrTimeDiffMilliseconds(startTime, endTime) {
@@ -31,6 +31,42 @@ function fetchTickersListFromDb(response) {
     });
 }
 
+function computeRevenueGrowth(request, response, next) {
+    var db = new sqlite3.Database(DB_FILE_NAME);
+    var revenueRecords = {};
+    db.all('SELECT * FROM revenue', (error, rows) => {
+        for (var i=0; i<rows.length; i++) {
+            if (!(rows[i].ticker in revenueRecords)) {
+                revenueRecords[rows[i].ticker] = {};
+            }
+            revenueRecords[rows[i].ticker][rows[i].year_index] = rows[i].revenue;
+        }
+        
+        var revenueGrowthRecords = {};
+        for (var ticker in revenueRecords) {
+            revenueGrowthRecords[ticker] = {};
+            revenueGrowthRecords[ticker]['Y_6'] = (revenueRecords[ticker]['Y_6'] - revenueRecords[ticker]['Y_5'])/revenueRecords[ticker]['Y_5'];
+            revenueGrowthRecords[ticker]['Y_5'] = (revenueRecords[ticker]['Y_5'] - revenueRecords[ticker]['Y_4'])/revenueRecords[ticker]['Y_4'];
+            revenueGrowthRecords[ticker]['Y_4'] = (revenueRecords[ticker]['Y_4'] - revenueRecords[ticker]['Y_3'])/revenueRecords[ticker]['Y_3'];
+            revenueGrowthRecords[ticker]['Y_3'] = (revenueRecords[ticker]['Y_3'] - revenueRecords[ticker]['Y_2'])/revenueRecords[ticker]['Y_2'];
+            revenueGrowthRecords[ticker]['Y_2'] = (revenueRecords[ticker]['Y_2'] - revenueRecords[ticker]['Y_1'])/revenueRecords[ticker]['Y_1'];
+        }
+
+        db.run('DROP TABLE IF EXISTS revenue_growth', () =>{
+            db.run('CREATE TABLE revenue_growth ( ticker TEXT, y2 REAL, y3 REAL, y4 REAL, y5 REAL, y6 REAL )', () => {
+                var insertStatement = db.prepare('INSERT INTO revenue_growth VALUES (?, ?, ?, ?, ?, ?)');
+                for (var symbol in revenueGrowthRecords) {
+                    insertStatement.run(symbol, revenueGrowthRecords[symbol]['Y_2'], revenueGrowthRecords[symbol]['Y_3'], revenueGrowthRecords[symbol]['Y_4'], revenueGrowthRecords[symbol]['Y_5'], revenueGrowthRecords[symbol]['Y_6']  );
+                }
+                insertStatement.finalize(() => {
+                    db.close();
+                    response.json(revenueGrowthRecords);
+                });
+            });
+        });
+    });
+}
+
 /* GET home page. */
 router.get('/', (request, response, next) => {
     response.render('index', { title: PAGE_TITLE });
@@ -39,5 +75,7 @@ router.get('/', (request, response, next) => {
 router.get('/ticker_list', (request, response, next) => {
     fetchTickersListFromDb(response);
 });
+
+router.post('/compute_revenue_growth', computeRevenueGrowth);
 
 module.exports = router;
