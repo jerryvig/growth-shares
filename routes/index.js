@@ -6,7 +6,7 @@ const PAGE_TITLE = 'Growth Shares';
 const DB_FILE_NAME = 'morningstar_data.sqlite3';
 
 function getHrTimeDiffMilliseconds(startTime, endTime) {
-    return (endTime[0] - startTime[0])*1000 + (endTime[1] - startTime[1])/1e6;
+    return (endTime[0] - startTime[0])*1e3 + (endTime[1] - startTime[1])/1e6;
 }
 
 function fetchTickersListFromDb(response) {
