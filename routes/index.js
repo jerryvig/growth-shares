@@ -45,11 +45,11 @@ function computeRevenueGrowth(request, response, next) {
         var revenueGrowthRecords = {};
         for (var ticker in revenueRecords) {
             revenueGrowthRecords[ticker] = {};
-            revenueGrowthRecords[ticker]['Y_6'] = (revenueRecords[ticker]['Y_6'] - revenueRecords[ticker]['Y_5'])/revenueRecords[ticker]['Y_5'];
-            revenueGrowthRecords[ticker]['Y_5'] = (revenueRecords[ticker]['Y_5'] - revenueRecords[ticker]['Y_4'])/revenueRecords[ticker]['Y_4'];
-            revenueGrowthRecords[ticker]['Y_4'] = (revenueRecords[ticker]['Y_4'] - revenueRecords[ticker]['Y_3'])/revenueRecords[ticker]['Y_3'];
-            revenueGrowthRecords[ticker]['Y_3'] = (revenueRecords[ticker]['Y_3'] - revenueRecords[ticker]['Y_2'])/revenueRecords[ticker]['Y_2'];
-            revenueGrowthRecords[ticker]['Y_2'] = (revenueRecords[ticker]['Y_2'] - revenueRecords[ticker]['Y_1'])/revenueRecords[ticker]['Y_1'];
+            for (var i=2; i<7; i++) {
+                var k1 = 'Y_' + i;
+                var k0 = 'Y_' + (i - 1);
+                revenueGrowthRecords[ticker][k1] = (revenueRecords[ticker][k1] - revenueRecords[ticker][k0])/revenueRecords[ticker][k0];
+            }
         }
 
         db.run('DROP TABLE IF EXISTS revenue_growth', () => {
