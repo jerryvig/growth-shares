@@ -76,6 +76,21 @@ function computeRevenueGrowth(request, response, next) {
     });
 }
 
+function computeRevenueGrowthStatistics(request, response, next) {
+    var start = process.hrtime();
+    var db = new sqlite3.Database(DB_FILE_NAME);
+    db.all('SELECT * FROM revenue_growth', (error, rows) => {
+        var revenueGrowthByTicker = {};
+        for (var i=0; i<rows.length; i++) {
+            revenueGrowthByTicker[rows[i].ticker] = [rows[i].y2, rows[i].y3, rows[i].y4, rows[i].y5, rows[i].y6];
+        }
+        
+        response.json(revenueGrowthByTicker);
+        
+        db.close();
+    });
+}
+
 /* GET home page. */
 router.get('/', (request, response, next) => {
     response.render('index', { title: PAGE_TITLE });
@@ -86,5 +101,7 @@ router.get('/ticker_list', (request, response, next) => {
 });
 
 router.post('/compute_revenue_growth', computeRevenueGrowth);
+
+router.post('/compute_revenue_growth_statistics', computeRevenueGrowthStatistics);
 
 module.exports = router;
