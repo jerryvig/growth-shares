@@ -32,6 +32,7 @@ function fetchTickersListFromDb(response) {
 }
 
 function computeRevenueGrowth(request, response, next) {
+    var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
     var revenueRecords = {};
     db.all('SELECT * FROM revenue', (error, rows) => {
@@ -48,13 +49,16 @@ function computeRevenueGrowth(request, response, next) {
             for (var i=2; i<7; i++) {
                 var k1 = 'Y_' + i;
                 var k0 = 'Y_' + (i - 1);
-                revenueGrowthRecords[ticker][k1] = (revenueRecords[ticker][k1] - revenueRecords[ticker][k0])/revenueRecords[ticker][k0];
+                if (revenueRecords[ticker][k0] > 0) {
+                    revenueGrowthRecords[ticker][k1] = (revenueRecords[ticker][k1] - revenueRecords[ticker][k0])/revenueRecords[ticker][k0];
+                } else {
+                    revenueGrowthRecords[ticker][k1] = 0;
+                }
             }
         }
 
         db.run('DROP TABLE IF EXISTS revenue_growth', () => {
             db.run('CREATE TABLE revenue_growth ( ticker TEXT, y2 REAL, y3 REAL, y4 REAL, y5 REAL, y6 REAL )', () => {
-                var start = process.hrtime();
                 db.run('BEGIN');
                 var insertStatement = db.prepare('INSERT INTO revenue_growth VALUES (?, ?, ?, ?, ?, ?)');
                 for (var symbol in revenueGrowthRecords) {
