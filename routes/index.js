@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
+const stats = require('stats-lite');
 
 const PAGE_TITLE = 'Growth Shares';
 const DB_FILE_NAME = 'morningstar_data.sqlite3';
@@ -85,8 +86,10 @@ function computeRevenueGrowthStatistics(request, response, next) {
             revenueGrowthByTicker[rows[i].ticker] = [rows[i].y2, rows[i].y3, rows[i].y4, rows[i].y5, rows[i].y6];
         }
         
+
         for (var ticker in revenueGrowthByTicker) {
-            
+            var avgGrowth = revenueGrowthByTicker[ticker].reduce((a,b) => a+b, 0)/5.0;
+            console.log('avgGrowth for %s = %f', ticker, avgGrowth);
         }
 
         db.close();
