@@ -93,19 +93,38 @@ function computeRevenueGrowthStatistics(request, response, next) {
                 'stdev': stats.stdev(revenueGrowthByTicker[ticker]),
                 'variance': stats.variance(revenueGrowthByTicker[ticker]),
                 'cum_growth': revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1)-1.0,
-                'geomean': Math.pow(revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1), 1/5)-1.0
+                'geomean': Math.pow(revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1), 1/5)-1.0,
+                'median': stats.median(revenueGrowthByTicker[ticker])
             };
             growthStatsByTicker[ticker]['sharpe_ratio'] = growthStatsByTicker[ticker]['mean']/growthStatsByTicker[ticker]['stdev'];
             if (growthStatsByTicker[ticker]['stdev'] === 0) {
                 growthStatsByTicker[ticker]['sharpe_ratio'] = 0;
             }
-            console.log('growth stats for %s = %s', ticker, JSON.stringify(growthStatsByTicker[ticker]));
         }
 
-        db.close();
-        var end = process.hrtime();
-        console.log('Finished in %f ms.', getHrTimeDiffMilliseconds(start, end));
-        response.json(growthStatsByTicker);
+        db.run('BEGIN');
+        db.run('DROP TABLE IF EXISTS revenue_growth_stats', () => {
+            db.run('CREATE TABLE revenue_growth_stats ( ticker TEXT, mean REAL, stdev REAL, variance REAL, cum_growth REAL, geomean REAL, median REAL, sharpe_ratio REAL )', () => {
+
+                var stmt = db.prepare('INSERT INTO revenue_growth_stats VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+                for (var ticker in growthStatsByTicker) {
+                    var gStats = growthStatsByTicker[ticker];
+                    stmt.run(ticker, gStats['mean'], gStats['stdev'], gStats['variance'],
+                        gStats['cum_growth'], gStats['geomean'], gStats['median'],  
+                        gStats['sharpe_ratio']);
+                }
+
+                stmt.finalize(() => {
+                    db.run('COMMIT');
+                    db.close();
+
+                    var end = process.hrtime();
+                    console.log('Computed and inserted revenue growth statistics in %f ms.',
+                        getHrTimeDiffMilliseconds(start, end));
+                    response.json(growthStatsByTicker);
+                });
+            });
+        });
     });
 }
 
