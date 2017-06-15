@@ -32,6 +32,28 @@ function fetchTickersListFromDb(response) {
     });
 }
 
+function fetchRevenueGrowthStats(response) {
+    var growthStats = [];
+    var start = process.hrtime();
+    var db = new sqlite3.Database(DB_FILE_NAME);
+    db.all('SELECT * FROM revenue_growth_stats ORDER BY sharpe_ratio DESC', (error, rows) => {
+
+        for (var i=0; i<rows.length; i++) {
+            growthStats.push({
+                'index': i+1,
+                'ticker': rows[i].ticker,
+                'mean': rows[i].mean,
+                'cum_growth': rows[i].cum_growth,
+                'sharpe_ratio': rows[i].sharpe_ratio
+            });
+        }
+        db.close();
+        var end = process.hrtime();
+        response.render('ticker_list', {'title': 'Revenue Growth Statistics',
+            'growthStats': growthStats});
+    });
+}
+
 function computeRevenueGrowth(request, response, next) {
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
@@ -128,7 +150,7 @@ function computeRevenueGrowthStatistics(request, response, next) {
     });
 }
 
-/* GET home page. */
+/* GET pages. */
 router.get('/', (request, response, next) => {
     response.render('index', { title: PAGE_TITLE });
 });
@@ -137,6 +159,7 @@ router.get('/ticker_list', (request, response, next) => {
     fetchTickersListFromDb(response);
 });
 
+/* POST pages */
 router.post('/compute_revenue_growth', computeRevenueGrowth);
 
 router.post('/compute_revenue_growth_statistics', computeRevenueGrowthStatistics);
