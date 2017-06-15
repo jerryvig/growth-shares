@@ -1,0 +1,28 @@
+<table style="margin:0 auto;">
+	<thead>
+		<tr>
+			<th colspan="7">Revenue Growth Statistics by Sharpe Ratio</th>
+		<tr>
+			<th>#</th>
+			<th>Symbol</th>
+			<th>Average Growth</th>
+			<th>Standard Deviation of Growth</th>
+			<th>Geometric Mean of Growth</th>
+			<th>Cumulative Growth</th>
+			<th>Sharpe Ratio of Growth</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#each growthStats}}
+			<tr>
+				<td> {{index}} </td>
+				<td> {{ticker}} </td>
+				<td> {{mean}} </td>
+				<td> {{stdev}} </td>
+				<td> {{geomean}} </td>
+				<td> {{cum_growth}} </td>
+				<td> {{sharpe_ratio}} </td>
+			</tr>
+		{{/each}}
+	</tbody>
+</table>
