@@ -6,3 +6,11 @@ body {
 a {
   color: #00B7FF;
 }
+
+tr:nth-child(odd) {
+    background-color: #E8E8E8;
+}
+
+table {
+  border-spacing: 0 2px;
+}
