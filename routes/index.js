@@ -93,7 +93,7 @@ function computeRevenueGrowthStatistics(request, response, next) {
                 'stdev': stats.stdev(revenueGrowthByTicker[ticker]),
                 'variance': stats.variance(revenueGrowthByTicker[ticker]),
                 'cum_growth': revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1)-1.0,
-                'geomean': (revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1)-1.0)/5.0
+                'geomean': Math.pow(revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1), 1/5)-1.0
             };
             growthStatsByTicker[ticker]['sharpe_ratio'] = growthStatsByTicker[ticker]['mean']/growthStatsByTicker[ticker]['stdev'];
             if (growthStatsByTicker[ticker]['stdev'] === 0) {
