@@ -85,9 +85,14 @@ function computeRevenueGrowthStatistics(request, response, next) {
             revenueGrowthByTicker[rows[i].ticker] = [rows[i].y2, rows[i].y3, rows[i].y4, rows[i].y5, rows[i].y6];
         }
         
-        response.json(revenueGrowthByTicker);
-        
+        for (var ticker in revenueGrowthByTicker) {
+            
+        }
+
         db.close();
+        var end = process.hrtime();
+        console.log('Finished in %f ms.', getHrTimeDiffMilliseconds(start, end));
+        response.json(revenueGrowthByTicker);
     });
 }
 
