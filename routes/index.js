@@ -36,8 +36,9 @@ function fetchRevenueGrowthStats(response) {
     var growthStats = [];
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
-    db.all('SELECT * FROM revenue_growth_stats ORDER BY sharpe_ratio DESC', (error, rows) => {
-
+    db.all('SELECT * FROM revenue_growth_stats WHERE mean!=0 ORDER BY sharpe_ratio DESC',
+        (error, rows) => {
+            
         for (var i=0; i<rows.length; i++) {
             growthStats.push({
                 'index': i+1,
