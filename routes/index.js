@@ -86,16 +86,26 @@ function computeRevenueGrowthStatistics(request, response, next) {
             revenueGrowthByTicker[rows[i].ticker] = [rows[i].y2, rows[i].y3, rows[i].y4, rows[i].y5, rows[i].y6];
         }
         
-
+        var growthStatsByTicker = {};
         for (var ticker in revenueGrowthByTicker) {
-            var avgGrowth = revenueGrowthByTicker[ticker].reduce((a,b) => a+b, 0)/5.0;
-            console.log('avgGrowth for %s = %f', ticker, avgGrowth);
+            growthStatsByTicker[ticker] = {
+                'mean': stats.mean(revenueGrowthByTicker[ticker]),
+                'stdev': stats.stdev(revenueGrowthByTicker[ticker]),
+                'variance': stats.variance(revenueGrowthByTicker[ticker]),
+                'cum_growth': revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1)-1.0,
+                'geomean': (revenueGrowthByTicker[ticker].reduce((a,b) => a*(1+b), 1)-1.0)/5.0
+            };
+            growthStatsByTicker[ticker]['sharpe_ratio'] = growthStatsByTicker[ticker]['mean']/growthStatsByTicker[ticker]['stdev'];
+            if (growthStatsByTicker[ticker]['stdev'] === 0) {
+                growthStatsByTicker[ticker]['sharpe_ratio'] = 0;
+            }
+            console.log('growth stats for %s = %s', ticker, JSON.stringify(growthStatsByTicker[ticker]));
         }
 
         db.close();
         var end = process.hrtime();
         console.log('Finished in %f ms.', getHrTimeDiffMilliseconds(start, end));
-        response.json(revenueGrowthByTicker);
+        response.json(growthStatsByTicker);
     });
 }
 
