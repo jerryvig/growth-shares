@@ -43,6 +43,7 @@ function fetchRevenueGrowthStats(response) {
             growthStats.push({
                 'index': i+1,
                 'ticker': rows[i].ticker,
+                'ttm': (rows[i].ttm * 100).toFixed(2) + '%',
                 'mean': (rows[i].mean * 100).toFixed(2) + '%',
                 'stdev': (rows[i].stdev * 100).toFixed(2) + '%',
                 'geomean': (rows[i].geomean * 100).toFixed(2) + '%',
@@ -114,6 +115,7 @@ function computeRevenueGrowthStatistics(request, response, next) {
         var growthStatsByTicker = {};
         for (var ticker in revenueGrowthByTicker) {
             growthStatsByTicker[ticker] = {
+                'ttm': revenueGrowthByTicker[ticker][4],
                 'mean': stats.mean(revenueGrowthByTicker[ticker]),
                 'stdev': stats.stdev(revenueGrowthByTicker[ticker]),
                 'variance': stats.variance(revenueGrowthByTicker[ticker]),
@@ -129,14 +131,14 @@ function computeRevenueGrowthStatistics(request, response, next) {
 
         db.run('BEGIN');
         db.run('DROP TABLE IF EXISTS revenue_growth_stats', () => {
-            db.run('CREATE TABLE revenue_growth_stats ( ticker TEXT, mean REAL, stdev REAL, variance REAL, cum_growth REAL, geomean REAL, median REAL, sharpe_ratio REAL )', () => {
+            db.run('CREATE TABLE revenue_growth_stats ( ticker TEXT, ttm REAL, mean REAL, stdev REAL, variance REAL, cum_growth REAL, geomean REAL, median REAL, sharpe_ratio REAL )', () => {
 
-                var stmt = db.prepare('INSERT INTO revenue_growth_stats VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+                var stmt = db.prepare('INSERT INTO revenue_growth_stats VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
                 for (var ticker in growthStatsByTicker) {
                     var gStats = growthStatsByTicker[ticker];
-                    stmt.run(ticker, gStats['mean'], gStats['stdev'], gStats['variance'],
-                        gStats['cum_growth'], gStats['geomean'], gStats['median'],  
-                        gStats['sharpe_ratio']);
+                    stmt.run(ticker, gStats['ttm'], gStats['mean'], gStats['stdev'],
+                        gStats['variance'], gStats['cum_growth'], gStats['geomean'],
+                        gStats['median'],  gStats['sharpe_ratio']);
                 }
 
                 stmt.finalize(() => {
