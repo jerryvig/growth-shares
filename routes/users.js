@@ -3,7 +3,13 @@ const router = express.Router();
 
 /* GET users listing. */
 router.get('/', (request, response, next) => {
-	response.send('respond with some user resource');
+	response.json([{
+		'id': 1,
+		'username': 'Jane'
+	},{
+		'id': 2,
+		'username': 'John'
+	}]);
 });
 
 router.get('/:userId', (request, response, next) => {

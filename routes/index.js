@@ -27,8 +27,8 @@ function fetchTickersListFromDb(response) {
         var end = process.hrtime(); 
         console.log('Read %d ticker symbols from the database in %f ms.', i,
             getHrTimeDiffMilliseconds(start, end));
-        //response.json(tickerRows);
-        response.render('ticker_list', {'title': 'AMEX Ticker List', 'tickerRows': tickerRows});
+        response.json(tickerRows);
+        //response.render('ticker_list', {'title': 'AMEX Ticker List', 'tickerRows': tickerRows});
     });
 }
 
