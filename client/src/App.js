@@ -1,5 +1,26 @@
 import React, { Component } from 'react';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn,
+} from 'material-ui/Table';
 import './App.css';
+
+
+class RevenueGrowthTable extends Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
+
+  componentDidMount() {
+    
+  }
+}
 
 class TickerListRow extends Component {
   constructor() {
@@ -8,13 +29,14 @@ class TickerListRow extends Component {
   }
 
   render() {
+    let row = this.props.row;
     return (
-      <tr key={this.props.ticker}>
-        <td>{this.props.index}</td>
-        <td>{this.props.ticker}</td>
-        <td>{this.props.companyName}</td>
-        <td>{this.props.exchange}</td>
-      </tr>
+      <TableRow>
+        <TableRowColumn>{row.index}</TableRowColumn>
+        <TableRowColumn>{row.ticker}</TableRowColumn>
+        <TableRowColumn>{row.companyName}</TableRowColumn>
+        <TableRowColumn>{row.exchange}</TableRowColumn>
+      </TableRow>
     );
   }
 }
@@ -22,45 +44,55 @@ class TickerListRow extends Component {
 class TickerListTable extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      'rows': [],
+    };
+  }
+
+  componentDidMount() {
+    fetch('/ticker_list')
+      .then(res => res.json())
+      .then(rows => this.setState({
+        'rows': rows
+      }));
   }
 
   render() {
     return (
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Symbol</th>
-            <th>Company Name</th>
-            <th>Exchange</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.props.rows.map(row => 
-            <TickerListRow index={row.index} ticker={row.ticker} companyName={row.companyName} exchange={row.exchange} />
+      <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHeaderColumn>#</TableHeaderColumn>
+              <TableHeaderColumn>Ticker</TableHeaderColumn>
+              <TableHeaderColumn>Company Name</TableHeaderColumn>
+              <TableHeaderColumn>Exchange</TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+        <TableBody>
+          {this.state.rows.map((row) => 
+            <TickerListRow row={row}></TickerListRow>
           )}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     );
   }
 }
 
 class App extends Component {
-  state = {
-    rows: []
-  };
+  constructor(props, context) {
+    super(props, context);
 
-  componentDidMount() {
-    fetch('/ticker_list')
-      .then(res => res.json())
-      .then(rows => this.setState({ rows }));
+    this.state = {
+      rows: [],
+    };
   }
 
   render() {
     return (
       <div className="App">
-        <TickerListTable rows={this.state.rows} />
+        <MuiThemeProvider>
+          <TickerListTable></TickerListTable>
+        </MuiThemeProvider>
       </div>
     );
   }
