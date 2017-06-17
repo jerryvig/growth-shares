@@ -10,6 +10,18 @@ import {
 } from 'material-ui/Table';
 import './App.css';
 
+class RevenueGrowthRow extends Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
+
+  render() {
+    let row = this.props.row;
+    return null;
+  }
+}
+
 
 class RevenueGrowthTable extends Component {
   constructor() {
@@ -22,9 +34,36 @@ class RevenueGrowthTable extends Component {
   componentDidMount() {
     fetch('/revenue_growth_stats')
       .then(res => res.json())
-      .then(rows => this.setState{
+      .then(rows => this.setState({
         'rows': rows
-      });
+      }));
+  }
+
+  render() {
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHeaderColumn>#</TableHeaderColumn>
+            <TableHeaderColumn>Ticker</TableHeaderColumn>
+            <TableHeaderColumn>TTM Growth</TableHeaderColumn>
+            <TableHeaderColumn>5 Yr. Mean Growth</TableHeaderColumn>
+            <TableHeaderColumn>5 Yr. Growth Standard Deviation</TableHeaderColumn>
+            <TableHeaderColumn>5 Yr. Cumulative Growth</TableHeaderColumn>
+            <TableHeaderColumn>Sharpe Ratio</TableHeaderColumn>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRowColumn>1</TableRowColumn>
+          <TableRowColumn>AAPL</TableRowColumn>
+          <TableRowColumn>12.12%</TableRowColumn>
+          <TableRowColumn>12.12%</TableRowColumn>
+          <TableRowColumn>12.12%</TableRowColumn>
+          <TableRowColumn>12.12%</TableRowColumn>
+          <TableRowColumn>0.809</TableRowColumn>
+        </TableBody>
+      </Table>
+    )
   }
 }
 
@@ -97,7 +136,8 @@ class App extends Component {
     return (
       <div className="App">
         <MuiThemeProvider>
-          <TickerListTable></TickerListTable>
+          {/* <TickerListTable></TickerListTable> */}
+          <RevenueGrowthTable></RevenueGrowthTable>
         </MuiThemeProvider>
       </div>
     );
