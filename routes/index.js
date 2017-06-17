@@ -112,7 +112,7 @@ function computeRevenueGrowth(request, response, next) {
 function computeRevenueGrowthStatistics(request, response, next) {
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
-    db.all('SELECT t1.*, t2.company_name FROM revenue_growth t1, ticker_list t2 WHERE t1.ticker=t2.ticker',
+    db.all('SELECT t1.*, t2.company_name, t3.revenue AS ttm_revenue FROM revenue_growth t1, ticker_list t2, revenue t3 WHERE t1.ticker=t2.ticker AND t3.ticker=t1.ticker AND t3.year_index="Y_6"',
         (error, rows) => {
         var revenueGrowthByTicker = {};
         var metaInfo = {};
@@ -120,6 +120,7 @@ function computeRevenueGrowthStatistics(request, response, next) {
             revenueGrowthByTicker[rows[i].ticker] = [rows[i].y2, rows[i].y3, rows[i].y4, rows[i].y5, rows[i].y6];
             metaInfo[rows[i].ticker] = {
                 'companyName': rows[i].company_name,
+                'ttmRevenue': rows[i].ttm_revenue,
             }
         }
         
@@ -127,7 +128,8 @@ function computeRevenueGrowthStatistics(request, response, next) {
         for (var ticker in revenueGrowthByTicker) {
             growthStatsByTicker[ticker] = {
                 'companyName': metaInfo[ticker].companyName,
-                'ttm': revenueGrowthByTicker[ticker][4],
+                'ttmRevenue': metaInfo[ticker].ttmRevenue,
+                'ttmGrowth': revenueGrowthByTicker[ticker][4],
                 'mean': stats.mean(revenueGrowthByTicker[ticker]),
                 'stdev': stats.stdev(revenueGrowthByTicker[ticker]),
                 'variance': stats.variance(revenueGrowthByTicker[ticker]),
@@ -143,12 +145,12 @@ function computeRevenueGrowthStatistics(request, response, next) {
 
         db.run('BEGIN');
         db.run('DROP TABLE IF EXISTS revenue_growth_stats', () => {
-            db.run('CREATE TABLE revenue_growth_stats ( ticker TEXT, company_name TEXT, ttm REAL, mean REAL, stdev REAL, variance REAL, cum_growth REAL, geomean REAL, median REAL, sharpe_ratio REAL )', () => {
+            db.run('CREATE TABLE revenue_growth_stats ( ticker TEXT, company_name TEXT, ttm_revenue INTEGER, ttm_growth REAL, mean REAL, stdev REAL, variance REAL, cum_growth REAL, geomean REAL, median REAL, sharpe_ratio REAL )', () => {
 
-                var stmt = db.prepare('INSERT INTO revenue_growth_stats VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                var stmt = db.prepare('INSERT INTO revenue_growth_stats VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
                 for (var ticker in growthStatsByTicker) {
                     var gStats = growthStatsByTicker[ticker];
-                    stmt.run(ticker, gStats['companyName'], gStats['ttm'], gStats['mean'],
+                    stmt.run(ticker, gStats['companyName'], gStats['ttmRevenue'], gStats['ttmGrowth'], gStats['mean'],
                         gStats['stdev'], gStats['variance'], gStats['cum_growth'], gStats['geomean'],
                         gStats['median'],  gStats['sharpe_ratio']);
                 }
