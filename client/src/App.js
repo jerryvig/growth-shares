@@ -18,10 +18,19 @@ class RevenueGrowthRow extends Component {
 
   render() {
     let row = this.props.row;
-    return null;
+    return (
+      <TableRow key={row.ticker}>
+        <TableRowColumn><strong>{row.index}</strong></TableRowColumn>
+        <TableRowColumn><strong>{row.ticker}</strong></TableRowColumn>
+        <TableRowColumn><strong>{row.ttm}</strong></TableRowColumn>
+        <TableRowColumn><strong>{row.mean}</strong></TableRowColumn>
+        <TableRowColumn><strong>{row.stdev}</strong></TableRowColumn>
+        <TableRowColumn><strong>{row.cum_growth}</strong></TableRowColumn>
+        <TableRowColumn><strong>{row.sharpe_ratio}</strong></TableRowColumn>
+      </TableRow>
+    );
   }
 }
-
 
 class RevenueGrowthTable extends Component {
   constructor() {
@@ -44,23 +53,19 @@ class RevenueGrowthTable extends Component {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHeaderColumn>#</TableHeaderColumn>
-            <TableHeaderColumn>Ticker</TableHeaderColumn>
-            <TableHeaderColumn>TTM Growth</TableHeaderColumn>
-            <TableHeaderColumn>5 Yr. Mean Growth</TableHeaderColumn>
-            <TableHeaderColumn>5 Yr. Growth Standard Deviation</TableHeaderColumn>
-            <TableHeaderColumn>5 Yr. Cumulative Growth</TableHeaderColumn>
-            <TableHeaderColumn>Sharpe Ratio</TableHeaderColumn>
+            <TableHeaderColumn><strong>#</strong></TableHeaderColumn>
+            <TableHeaderColumn><strong>Ticker</strong></TableHeaderColumn>
+            <TableHeaderColumn><strong>TTM Growth</strong></TableHeaderColumn>
+            <TableHeaderColumn><strong>5 Yr. Mean Growth</strong></TableHeaderColumn>
+            <TableHeaderColumn><strong>5 Yr. Growth Standard Deviation</strong></TableHeaderColumn>
+            <TableHeaderColumn><strong>5 Yr. Cumulative Growth</strong></TableHeaderColumn>
+            <TableHeaderColumn><strong>Sharpe Ratio</strong></TableHeaderColumn>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRowColumn>1</TableRowColumn>
-          <TableRowColumn>AAPL</TableRowColumn>
-          <TableRowColumn>12.12%</TableRowColumn>
-          <TableRowColumn>12.12%</TableRowColumn>
-          <TableRowColumn>12.12%</TableRowColumn>
-          <TableRowColumn>12.12%</TableRowColumn>
-          <TableRowColumn>0.809</TableRowColumn>
+          {this.state.rows.map((row) => 
+            <RevenueGrowthRow row={row}></RevenueGrowthRow>
+          )}
         </TableBody>
       </Table>
     )
