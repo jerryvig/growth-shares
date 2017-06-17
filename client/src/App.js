@@ -31,14 +31,15 @@ class RevenueGrowthRow extends Component {
     let row = this.props.row;
     return (
       <TableRow key={row.ticker} >
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{row.index}</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.textStyle }><strong><h3>{row.ticker}</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.textStyle }><strong><h3>{row.companyName}</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{row.ttm}</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{row.mean}</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{row.stdev}</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{row.cum_growth}</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{row.sharpe_ratio}</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.index }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.textStyle }><strong><h3>{ row.ticker }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.textStyle }><strong><h3>{ row.companyName }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.ttmRevenue }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.ttmGrowth }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.mean }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.stdev }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.cum_growth }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.sharpe_ratio }</h3></strong></TableRowColumn>
       </TableRow>
     );
   }
@@ -79,6 +80,7 @@ class RevenueGrowthTable extends Component {
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>#</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>Ticker</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>Company Name</h2></strong></TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }><strong><h2>Trailing 12 Mo. Revenue</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>Trailing 12 Mo. Growth</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>5 Yr. Mean Growth</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>5 Yr. Growth Standard Deviation</h2></strong></TableHeaderColumn>
