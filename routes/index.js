@@ -32,6 +32,10 @@ function fetchTickersListFromDb(response) {
     });
 }
 
+function getPercentageString(value) {
+    return (value *100).toFixed(2) + '%';
+}
+
 function fetchRevenueGrowthStats(response) {
     var growthStats = [];
     var start = process.hrtime();
@@ -43,18 +47,19 @@ function fetchRevenueGrowthStats(response) {
             growthStats.push({
                 'index': i+1,
                 'ticker': rows[i].ticker,
-                'ttm': (rows[i].ttm * 100).toFixed(2) + '%',
-                'mean': (rows[i].mean * 100).toFixed(2) + '%',
-                'stdev': (rows[i].stdev * 100).toFixed(2) + '%',
-                'geomean': (rows[i].geomean * 100).toFixed(2) + '%',
-                'cum_growth': (rows[i].cum_growth * 100).toFixed(2) + '%',
+                'ttm': getPercentageString(rows[i].ttm),
+                'mean': getPercentageString(rows[i].mean),
+                'stdev': getPercentageString(rows[i].stdev),
+                'geomean': getPercentageString(rows[i].geomean),
+                'cum_growth': getPercentageString(rows[i].cum_growth),
                 'sharpe_ratio': rows[i].sharpe_ratio.toFixed(3)
             });
         }
         db.close();
         var end = process.hrtime();
-        response.render('growth_statistics', {'title': 'Revenue Growth Statistics',
-            'growthStats': growthStats});
+        response.json(growthStats);
+        /*response.render('growth_statistics', {'title': 'Revenue Growth Statistics',
+            'growthStats': growthStats}); */
     });
 }
 
