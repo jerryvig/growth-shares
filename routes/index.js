@@ -115,14 +115,18 @@ function computeRevenueGrowthStatistics(request, response, next) {
     db.all('SELECT t1.*, t2.company_name FROM revenue_growth t1, ticker_list t2 WHERE t1.ticker=t2.ticker',
         (error, rows) => {
         var revenueGrowthByTicker = {};
+        var metaInfo = {};
         for (var i=0; i<rows.length; i++) {
-            revenueGrowthByTicker[rows[i].ticker] = [rows[i].company_name, rows[i].y2, rows[i].y3, rows[i].y4, rows[i].y5, rows[i].y6];
+            revenueGrowthByTicker[rows[i].ticker] = [rows[i].y2, rows[i].y3, rows[i].y4, rows[i].y5, rows[i].y6];
+            metaInfo[rows[i].ticker] = {
+                'companyName': rows[i].company_name,
+            }
         }
         
         var growthStatsByTicker = {};
         for (var ticker in revenueGrowthByTicker) {
             growthStatsByTicker[ticker] = {
-                'companyName': revenueGrowthByTicker[ticker][0],
+                'companyName': metaInfo[ticker].companyName,
                 'ttm': revenueGrowthByTicker[ticker][4],
                 'mean': stats.mean(revenueGrowthByTicker[ticker]),
                 'stdev': stats.stdev(revenueGrowthByTicker[ticker]),
