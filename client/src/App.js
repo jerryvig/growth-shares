@@ -14,6 +14,10 @@ class RevenueGrowthRow extends Component {
   constructor() {
     super();
     this.state = {};
+    this.companyNameStyle = {
+      whiteSpace: 'normal',
+      wordWrap: 'break-word'
+    };
   }
 
   render() {
@@ -22,6 +26,7 @@ class RevenueGrowthRow extends Component {
       <TableRow key={row.ticker}>
         <TableRowColumn><strong>{row.index}</strong></TableRowColumn>
         <TableRowColumn><strong>{row.ticker}</strong></TableRowColumn>
+        <TableRowColumn style={ this.companyNameStyle }><strong>{row.companyName}</strong></TableRowColumn>
         <TableRowColumn><strong>{row.ttm}</strong></TableRowColumn>
         <TableRowColumn><strong>{row.mean}</strong></TableRowColumn>
         <TableRowColumn><strong>{row.stdev}</strong></TableRowColumn>
@@ -55,6 +60,7 @@ class RevenueGrowthTable extends Component {
           <TableRow>
             <TableHeaderColumn><strong>#</strong></TableHeaderColumn>
             <TableHeaderColumn><strong>Ticker</strong></TableHeaderColumn>
+            <TableHeaderColumn><strong>Company Name</strong></TableHeaderColumn>
             <TableHeaderColumn><strong>TTM Growth</strong></TableHeaderColumn>
             <TableHeaderColumn><strong>5 Yr. Mean Growth</strong></TableHeaderColumn>
             <TableHeaderColumn><strong>5 Yr. Growth Standard Deviation</strong></TableHeaderColumn>

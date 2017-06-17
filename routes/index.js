@@ -47,7 +47,7 @@ function fetchRevenueGrowthStats(response) {
             growthStats.push({
                 'index': i+1,
                 'ticker': rows[i].ticker,
-                'companyName': rows[i].companyName,
+                'companyName': rows[i].company_name,
                 'ttm': getPercentageString(rows[i].ttm),
                 'mean': getPercentageString(rows[i].mean),
                 'stdev': getPercentageString(rows[i].stdev),
