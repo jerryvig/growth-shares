@@ -72,7 +72,7 @@ class RevenueGrowthTable extends Component {
       <Table fixedHeader={true}>
         <TableHeader enableSelectAll={ false } displaySelectAll={ false }>
           <TableRow>
-            <TableHeaderColumn colSpan="8" tooltip="Super Header" style={{textAlign: 'center'}}>
+            <TableHeaderColumn colSpan="9" tooltip="Super Header" style={{textAlign: 'center'}}>
                <h2>Revenue Growth Statistics</h2>
             </TableHeaderColumn>
           </TableRow>
