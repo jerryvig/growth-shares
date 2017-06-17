@@ -14,11 +14,17 @@ import './App.css';
 class RevenueGrowthTable extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      'rows': [],
+    };
   }
 
   componentDidMount() {
-    
+    fetch('/revenue_growth_stats')
+      .then(res => res.json())
+      .then(rows => this.setState{
+        'rows': rows
+      });
   }
 }
 
