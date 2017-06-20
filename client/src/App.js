@@ -8,6 +8,8 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
+import Paper from 'material-ui/Paper';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import './App.css';
 
 class RevenueGrowthRow extends Component {
@@ -19,11 +21,15 @@ class RevenueGrowthRow extends Component {
       whiteSpace: 'normal',
       wordWrap: 'break-word',
       textAlign: 'left',
+      fontWeight: 'bold',
+      fontSize: 'medium',
     };
 
     this.numberStyle = {
       whiteSpace: 'normal',
       textAlign: 'right',
+      fontWeight: 'bold',
+      fontSize: 'medium',
     }
   }
 
@@ -31,14 +37,14 @@ class RevenueGrowthRow extends Component {
     let row = this.props.row;
     return (
       <TableRow key={row.ticker} >
-        <TableRowColumn style={ this.textStyle }><strong><h3>{ row.ticker }</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.textStyle }><strong><h3>{ row.companyName }</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.ttmRevenue }</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.ttmGrowth }</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.mean }</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.stdev }</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.cum_growth }</h3></strong></TableRowColumn>
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.sharpe_ratio }</h3></strong></TableRowColumn>
+        <TableRowColumn style={ this.textStyle }>{ row.ticker }</TableRowColumn>
+        <TableRowColumn style={ this.textStyle }>{ row.companyName }</TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }>{ row.ttmRevenue }</TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }>{ row.ttmGrowth }</TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }>{ row.mean }</TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }>{ row.stdev }</TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }>{ row.cum_growth }</TableRowColumn>
+        <TableRowColumn style={ this.numberStyle }>{ row.sharpe_ratio }</TableRowColumn>
       </TableRow>
     );
   }
@@ -55,8 +61,36 @@ class RevenueGrowthTable extends Component {
       whiteSpace: 'normal',
       wordWrap: 'break-word',
       textAlign: 'left',
+      color: 'black',
+      'fontWeight': 'bold',
+      'fontSize': 'medium',
+    };
+
+    this.paperStyle = {
+      width: '96%',
+      height: window.innerHeight*.7,
+      margin: 'auto',
+      textAlign: 'center',
+      // overflow: 'scroll',
+      marginTop: '2%'
+    };
+
+    this.cardHeaderStyle = {
+      textAlign: 'center',
+      color: 'black',
+      fontWeight: 'bold'
+    };
+
+    this.scrollDivStyle = {
+      overflow: 'scroll'
+    };
+
+    this.tableBodyStyle = {
+      overflow: 'scroll',
+      height: window.innerHeight*.7,
     };
   }
+
 
   componentDidMount() {
     fetch('/revenue_growth_stats')
@@ -68,30 +102,28 @@ class RevenueGrowthTable extends Component {
 
   render() {
     return (
+      <Card style={ this.paperStyle } zDepth={2}>
+        <CardHeader style={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
       <Table fixedHeader={true}>
-        <TableHeader enableSelectAll={ false } displaySelectAll={ false }>
+        <TableHeader enableSelectAll={ false } displaySelectAll={ false } fixedHeader={ true }>
           <TableRow>
-            <TableHeaderColumn colSpan="9" tooltip="Super Header" style={{textAlign: 'center'}}>
-               <h2>Revenue Growth Statistics</h2>
-            </TableHeaderColumn>
-          </TableRow>
-          <TableRow>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>Ticker</h2></strong></TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>Company Name</h2></strong></TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>Trailing 12 Mo. Revenue</h2></strong></TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>Trailing 12 Mo. Growth</h2></strong></TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>5 Yr. Mean Growth</h2></strong></TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>5 Yr. Growth Standard Deviation</h2></strong></TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>5 Yr. Cumulative Growth</h2></strong></TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>Sharpe Ratio</h2></strong></TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>Ticker</TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>Company Name</TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>Trailing 12 Mo. Revenue</TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>Trailing 12 Mo. Growth</TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>5 Yr. Mean Growth</TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>5 Yr. Growth Standard Deviation</TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>5 Yr. Cumulative Growth</TableHeaderColumn>
+            <TableHeaderColumn style={ this.headerStyle }>Sharpe Ratio</TableHeaderColumn>
           </TableRow>
         </TableHeader>
-        <TableBody stripedRows={ true }>
+        <TableBody stripedRows={ true } style={ this.tableBodyStyle }>
           {this.state.rows.map((row) => 
             <RevenueGrowthRow row={row}></RevenueGrowthRow>
           )}
         </TableBody>
       </Table>
+      </Card>
     )
   }
 }
