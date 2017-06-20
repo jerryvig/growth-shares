@@ -85,7 +85,7 @@ class RevenueGrowthTable extends Component {
     this.cardStyle = {
       width: '96%',
       margin: 'auto',
-      textAlign: 'center',
+    // textAlign: 'center',
       marginTop: '1%'
     };
 
@@ -108,8 +108,8 @@ class RevenueGrowthTable extends Component {
     return (
       <Card style={ this.cardStyle } zDepth={2}>
         <CardHeader style={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
-      <Table height={ window.innerHeight*0.7 } fixedHeader={true} fixedFooter={true}>
-        <TableHeader enableSelectAll={ false } displaySelectAll={ false } fixedHeader={ true }>
+      <Table height={ window.innerHeight * 0.7 } fixedHeader={ true } fixedFooter={ true }>
+        <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
           <TableRow>
             <TableHeaderColumn style={ this.headerStyle }>
               Ticker
@@ -137,7 +137,7 @@ class RevenueGrowthTable extends Component {
             </TableHeaderColumn>
           </TableRow>
         </TableHeader>
-        <TableBody stripedRows={ true }>
+        <TableBody stripedRows={ false }>
           {this.state.rows.map((row) => 
             <RevenueGrowthRow row={row}></RevenueGrowthRow>
           )}
