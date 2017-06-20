@@ -31,7 +31,6 @@ class RevenueGrowthRow extends Component {
     let row = this.props.row;
     return (
       <TableRow key={row.ticker} >
-        <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.index }</h3></strong></TableRowColumn>
         <TableRowColumn style={ this.textStyle }><strong><h3>{ row.ticker }</h3></strong></TableRowColumn>
         <TableRowColumn style={ this.textStyle }><strong><h3>{ row.companyName }</h3></strong></TableRowColumn>
         <TableRowColumn style={ this.numberStyle }><strong><h3>{ row.ttmRevenue }</h3></strong></TableRowColumn>
@@ -77,7 +76,6 @@ class RevenueGrowthTable extends Component {
             </TableHeaderColumn>
           </TableRow>
           <TableRow>
-            <TableHeaderColumn style={ this.headerStyle }><strong><h2>#</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>Ticker</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>Company Name</h2></strong></TableHeaderColumn>
             <TableHeaderColumn style={ this.headerStyle }><strong><h2>Trailing 12 Mo. Revenue</h2></strong></TableHeaderColumn>
