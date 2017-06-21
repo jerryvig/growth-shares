@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
 import {
   Table,
   TableBody,
@@ -8,9 +9,16 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
-import Paper from 'material-ui/Paper';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import Paper from 'material-ui/Paper';
+
 import './App.css';
+
 
 class RevenueGrowthRow extends Component {
   constructor() {
@@ -85,14 +93,14 @@ class RevenueGrowthTable extends Component {
     this.cardStyle = {
       width: '96%',
       margin: 'auto',
-    // textAlign: 'center',
       marginTop: '1%'
     };
 
     this.cardHeaderStyle = {
       textAlign: 'center',
       color: 'black',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      fontSize: 'medium',
     };
   }
 
@@ -108,7 +116,7 @@ class RevenueGrowthTable extends Component {
     return (
       <Card style={ this.cardStyle } zDepth={2}>
         <CardHeader style={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
-      <Table height={ window.innerHeight * 0.7 } fixedHeader={ true } fixedFooter={ true }>
+      <Table height={ window.innerHeight*0.6 } fixedHeader={ true } fixedFooter={ true }>
         <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
           <TableRow>
             <TableHeaderColumn style={ this.headerStyle }>
@@ -204,6 +212,32 @@ class TickerListTable extends Component {
   }
 }
 
+class Logged extends Component {
+  constructor() {
+    super();
+    this.state = {
+      'rows': [],
+    }
+  }
+
+  render() {
+    return (
+      <IconMenu
+        {...this.props}
+        iconButtonElement={ <IconButton><MoreVertIcon /></IconButton> }
+        targetOrigin={{horizontal: 'right', vertical: 'top'}}
+        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+      >
+        <MenuItem primaryText="A" />
+        <MenuItem primaryText="B" />
+        <MenuItem primaryText="C" />
+      </IconMenu>
+    )
+  }
+}
+
+Logged.muiName = 'IconMenu';
+
 class App extends Component {
   constructor(props, context) {
     super(props, context);
@@ -217,8 +251,14 @@ class App extends Component {
     return (
       <div className="App">
         <MuiThemeProvider>
-          {/* <TickerListTable></TickerListTable> */}
-          <RevenueGrowthTable></RevenueGrowthTable>
+          <div>
+           {/* <TickerListTable></TickerListTable> */}
+            <Paper zDepth={ 2 } >
+              <AppBar title="Growth Shares" iconElementRight={ <Logged></Logged> }>
+              </AppBar>
+            </Paper>
+            <RevenueGrowthTable></RevenueGrowthTable>
+          </div>
         </MuiThemeProvider>
       </div>
     );
