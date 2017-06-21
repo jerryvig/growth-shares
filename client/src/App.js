@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Paper from 'material-ui/Paper';
 import {
   Table,
   TableBody,
@@ -9,14 +15,6 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import IconButton from 'material-ui/IconButton';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
-import Paper from 'material-ui/Paper';
-
 import './App.css';
 
 
@@ -116,7 +114,7 @@ class RevenueGrowthTable extends Component {
     return (
       <Card style={ this.cardStyle } zDepth={2}>
         <CardHeader style={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
-      <Table height={ window.innerHeight*0.6 } fixedHeader={ true } fixedFooter={ true }>
+      <Table height={ String(Math.floor(window.innerHeight*0.6))+'px' } fixedHeader={ true } fixedFooter={ true }>
         <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
           <TableRow>
             <TableHeaderColumn style={ this.headerStyle }>
@@ -147,7 +145,7 @@ class RevenueGrowthTable extends Component {
         </TableHeader>
         <TableBody stripedRows={ false }>
           {this.state.rows.map((row) => 
-            <RevenueGrowthRow row={row}></RevenueGrowthRow>
+            <RevenueGrowthRow key={ row.index } row={row}></RevenueGrowthRow>
           )}
         </TableBody>
       </Table>
@@ -224,13 +222,14 @@ class Logged extends Component {
     return (
       <IconMenu
         {...this.props}
-        iconButtonElement={ <IconButton><MoreVertIcon /></IconButton> }
+        iconButtonElement={ <IconButton><MoreVertIcon></MoreVertIcon></IconButton> }
         targetOrigin={{horizontal: 'right', vertical: 'top'}}
         anchorOrigin={{horizontal: 'right', vertical: 'top'}}
       >
-        <MenuItem primaryText="A" />
-        <MenuItem primaryText="B" />
-        <MenuItem primaryText="C" />
+        <MenuItem primaryText="Sign Out"></MenuItem>
+        <MenuItem primaryText="Settings"></MenuItem>
+        <MenuItem primaryText="Profile"></MenuItem>
+        <MenuItem primaryText="Other Menu Item"></MenuItem>
       </IconMenu>
     )
   }
