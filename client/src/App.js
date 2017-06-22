@@ -7,6 +7,7 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import Paper from 'material-ui/Paper';
 import {
   Table,
@@ -113,7 +114,7 @@ class RevenueGrowthTable extends Component {
 
   render() {
     return (
-      <Card style={ this.cardStyle } zDepth={2}>
+      <Card style={ this.cardStyle } zDepth={ 2 }>
         <CardHeader style={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
       <Table height={ String(Math.floor(window.innerHeight*0.6))+'px' } fixedHeader={ true } fixedFooter={ true }>
         <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
@@ -244,6 +245,11 @@ class App extends Component {
 
     this.state = {
       rows: [],
+      drawerOpen: false,
+    };
+
+    this.onAppBarLeftTouchTap = () => {
+      this.setState({ drawerOpen: !this.state.drawerOpen }); 
     };
   }
 
@@ -252,15 +258,22 @@ class App extends Component {
       <div className="App">
         <MuiThemeProvider>
           <div>
-           {/* <TickerListTable></TickerListTable> */}
-            <Drawer open={this.state.open}>
-              <MenuItem>Menu Item</MenuItem>
-              <MenuItem>Menu Item 2</MenuItem>
+            <Drawer open={ this.state.drawerOpen } zDepth={ 4 }>
+              <AppBar title="Growth Shares" zDepth={ 2 }
+                onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
+              >
+              </AppBar>
+              <MenuItem>Revenue Growth</MenuItem>
+              <MenuItem>Full Ticker List</MenuItem>
             </Drawer>
             <Paper zDepth={ 2 } >
-              <AppBar title="Growth Shares" iconElementRight={ <Logged></Logged> }>
+              <AppBar title="Growth Shares"
+                iconElementRight={ <Logged></Logged> }
+                onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
+                >
               </AppBar>
             </Paper>
+            {/* <TickerListTable></TickerListTable> */}
             <RevenueGrowthTable></RevenueGrowthTable>
           </div>
         </MuiThemeProvider>
