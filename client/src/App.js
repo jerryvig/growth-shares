@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AppBar from 'material-ui/AppBar';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -252,6 +253,10 @@ class App extends Component {
         <MuiThemeProvider>
           <div>
            {/* <TickerListTable></TickerListTable> */}
+            <Drawer open={this.state.open}>
+              <MenuItem>Menu Item</MenuItem>
+              <MenuItem>Menu Item 2</MenuItem>
+            </Drawer>
             <Paper zDepth={ 2 } >
               <AppBar title="Growth Shares" iconElementRight={ <Logged></Logged> }>
               </AppBar>
