@@ -100,7 +100,7 @@ class RevenueGrowthTable extends Component {
       textAlign: 'center',
       color: 'black',
       fontWeight: 'bold',
-      fontSize: 'medium',
+      fontSize: '18px',
     };
   }
 
@@ -116,41 +116,41 @@ class RevenueGrowthTable extends Component {
     return (
       <Card style={ this.cardStyle } zDepth={ 2 }>
         <CardHeader style={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
-      <Table height={ String(Math.floor(window.innerHeight*0.6))+'px' } fixedHeader={ true } fixedFooter={ true }>
-        <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
-          <TableRow>
-            <TableHeaderColumn style={ this.headerStyle }>
-              Ticker
-            </TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }>
-              Company Name
-            </TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }>
-              Trailing 12 Mo. Revenue
-            </TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }>
-              Trailing 12 Mo. Growth
-            </TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }>
-              5 Yr. Mean Growth
-            </TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }>
-              5 Yr. Growth Standard Deviation
-            </TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }>
-              5 Yr. Cumulative Growth
-            </TableHeaderColumn>
-            <TableHeaderColumn style={ this.headerStyle }>
-              Sharpe Ratio
-            </TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody stripedRows={ false }>
-          {this.state.rows.map((row) => 
-            <RevenueGrowthRow key={ row.index } row={row}></RevenueGrowthRow>
-          )}
-        </TableBody>
-      </Table>
+        <Table height={ String(Math.floor(window.innerHeight*0.6))+'px' } fixedHeader={ true } fixedFooter={ true }>
+          <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
+            <TableRow>
+              <TableHeaderColumn style={ this.headerStyle }>
+                Ticker
+              </TableHeaderColumn>
+              <TableHeaderColumn style={ this.headerStyle }>
+                Company Name
+              </TableHeaderColumn>
+              <TableHeaderColumn style={ this.headerStyle }>
+                Trailing 12 Mo. Revenue
+              </TableHeaderColumn>
+              <TableHeaderColumn style={ this.headerStyle }>
+                Trailing 12 Mo. Growth
+              </TableHeaderColumn>
+              <TableHeaderColumn style={ this.headerStyle }>
+                5 Yr. Mean Growth
+              </TableHeaderColumn>
+              <TableHeaderColumn style={ this.headerStyle }>
+                5 Yr. Growth Standard Deviation
+              </TableHeaderColumn>
+              <TableHeaderColumn style={ this.headerStyle }>
+                5 Yr. Cumulative Growth
+              </TableHeaderColumn>
+              <TableHeaderColumn style={ this.headerStyle }>
+                Sharpe Ratio
+              </TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody stripedRows={ false }>
+            {this.state.rows.map((row) => 
+              <RevenueGrowthRow key={ row.index } row={row}></RevenueGrowthRow>
+            )}
+          </TableBody>
+        </Table>
       </Card>
     )
   }
@@ -160,16 +160,32 @@ class TickerListRow extends Component {
   constructor() {
     super()
     this.state = {};
+
+    this.textStyle = {
+      whiteSpace: 'normal',
+      wordWrap: 'break-word',
+      textAlign: 'left',
+      fontWeight: 'bold',
+      fontSize: 'medium',
+    };
   }
 
   render() {
     let row = this.props.row;
     return (
-      <TableRow>
-        <TableRowColumn>{row.index}</TableRowColumn>
-        <TableRowColumn>{row.ticker}</TableRowColumn>
-        <TableRowColumn>{row.companyName}</TableRowColumn>
-        <TableRowColumn>{row.exchange}</TableRowColumn>
+      <TableRow key={ row.index }>
+        <TableRowColumn style={ this.textStyle }>
+          {row.index}
+        </TableRowColumn>
+        <TableRowColumn style={ this.textStyle }>
+          {row.ticker}
+        </TableRowColumn>
+        <TableRowColumn style={ this.textStyle }>
+          {row.companyName}
+        </TableRowColumn>
+        <TableRowColumn style={ this.textStyle }>
+         {row.exchange}
+        </TableRowColumn>
       </TableRow>
     );
   }
@@ -180,6 +196,28 @@ class TickerListTable extends Component {
     super();
     this.state = {
       'rows': [],
+    };
+
+    this.headerStyle = {
+      whiteSpace: 'normal',
+      wordWrap: 'break-word',
+      textAlign: 'left',
+      color: 'black',
+      fontWeight: 'bold',
+      fontSize: 'medium',
+    };
+
+    this.cardStyle = {
+      width: '96%',
+      margin: 'auto',
+      marginTop: '1%'
+    };
+
+    this.cardHeaderStyle = {
+        textAlign: 'center',
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: '18px'
     };
   }
 
@@ -193,21 +231,24 @@ class TickerListTable extends Component {
 
   render() {
     return (
-      <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHeaderColumn>#</TableHeaderColumn>
-              <TableHeaderColumn>Ticker</TableHeaderColumn>
-              <TableHeaderColumn>Company Name</TableHeaderColumn>
-              <TableHeaderColumn>Exchange</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-        <TableBody>
-          {this.state.rows.map((row) => 
-            <TickerListRow row={row}></TickerListRow>
-          )}
-        </TableBody>
-      </Table>
+      <Card style={ this.cardStyle } zDepth={ 2 }>
+        <CardHeader style={ this.cardHeaderStyle } title="Full Ticker List"></CardHeader>
+        <Table height={ String(Math.floor(window.innerHeight*0.6))+'px' } fixedHeader={ true } fixedFooter={ true }>
+            <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
+              <TableRow>
+                <TableHeaderColumn style={ this.headerStyle }>#</TableHeaderColumn>
+                <TableHeaderColumn style={ this.headerStyle }>Ticker</TableHeaderColumn>
+                <TableHeaderColumn style={ this.headerStyle }>Company Name</TableHeaderColumn>
+                <TableHeaderColumn style={ this.headerStyle }>Exchange</TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+          <TableBody>
+            {this.state.rows.map((row) => 
+              <TickerListRow key={ row.index } row={row}></TickerListRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
     );
   }
 }
@@ -264,8 +305,8 @@ class App extends Component {
                 titleStyle={{ fontSize: '20px', fontWeight: 'bold' }}
               >
               </AppBar>
-              <MenuItem>Revenue Growth</MenuItem>
-              <MenuItem>Full Ticker List</MenuItem>
+              <MenuItem style={{ fontWeight: 'bold' }}>Revenue Growth</MenuItem>
+              <MenuItem style={{ fontWeight: 'bold' }}>Full Ticker List</MenuItem>
             </Drawer>
             <Paper zDepth={ 2 } >
               <AppBar title="Growth Shares"
@@ -275,8 +316,8 @@ class App extends Component {
                 >
               </AppBar>
             </Paper>
-            {/* <TickerListTable></TickerListTable> */}
-            <RevenueGrowthTable></RevenueGrowthTable>
+            <TickerListTable></TickerListTable>
+            {/* <RevenueGrowthTable></RevenueGrowthTable> */}
           </div>
         </MuiThemeProvider>
       </div>
