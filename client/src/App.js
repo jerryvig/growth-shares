@@ -93,7 +93,7 @@ class RevenueGrowthTable extends Component {
     this.cardStyle = {
       width: '96%',
       margin: 'auto',
-      marginTop: '1%'
+      marginTop: '1%',
     };
 
     this.cardHeaderStyle = {
@@ -115,8 +115,8 @@ class RevenueGrowthTable extends Component {
   render() {
     return (
       <Card style={ this.cardStyle } zDepth={ 2 }>
-        <CardHeader style={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
-        <Table height={ String(Math.floor(window.innerHeight*0.6))+'px' } fixedHeader={ true } fixedFooter={ true }>
+        <CardHeader style={{ backgroundColor: '#E8E8E8'}} titleStyle={ this.cardHeaderStyle } title="Revenue Growth Statistics"></CardHeader>
+        <Table height={ '77vh' } fixedHeader={ true } fixedFooter={ true }>
           <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
             <TableRow>
               <TableHeaderColumn style={ this.headerStyle }>
@@ -232,8 +232,8 @@ class TickerListTable extends Component {
   render() {
     return (
       <Card style={ this.cardStyle } zDepth={ 2 }>
-        <CardHeader style={ this.cardHeaderStyle } title="Full Ticker List"></CardHeader>
-        <Table height={ String(Math.floor(window.innerHeight*0.6))+'px' } fixedHeader={ true } fixedFooter={ true }>
+        <CardHeader style={{ backgroundColor: '#E8E8E8'}} titleStyle={ this.cardHeaderStyle } title="Full Ticker List"></CardHeader>
+        <Table height={ '77vh' } fixedHeader={ true } fixedFooter={ true }>
             <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
               <TableRow>
                 <TableHeaderColumn style={ this.headerStyle }>#</TableHeaderColumn>
@@ -316,8 +316,8 @@ class App extends Component {
                 >
               </AppBar>
             </Paper>
-            <TickerListTable></TickerListTable>
-            {/* <RevenueGrowthTable></RevenueGrowthTable> */}
+            {/* <TickerListTable></TickerListTable> */}
+            <RevenueGrowthTable></RevenueGrowthTable>
           </div>
         </MuiThemeProvider>
       </div>
