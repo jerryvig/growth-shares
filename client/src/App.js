@@ -261,7 +261,7 @@ class App extends Component {
             <Drawer open={ this.state.drawerOpen } zDepth={ 4 }>
               <AppBar title="Growth Shares" zDepth={ 2 }
                 onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
-                titleStyle={{ fontSize: '20px' }}
+                titleStyle={{ fontSize: '20px', fontWeight: 'bold' }}
               >
               </AppBar>
               <MenuItem>Revenue Growth</MenuItem>
@@ -271,6 +271,7 @@ class App extends Component {
               <AppBar title="Growth Shares"
                 iconElementRight={ <Logged></Logged> }
                 onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
+                titleStyle={{ fontSize: '26px', fontWeight: 'bold' }}
                 >
               </AppBar>
             </Paper>
