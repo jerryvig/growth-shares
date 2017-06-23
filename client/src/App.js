@@ -17,6 +17,12 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
+import {
+  BrowserRouter as Router,
+  Link,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import './App.css';
 
 
@@ -298,6 +304,7 @@ class App extends Component {
     return (
       <div className="App">
         <MuiThemeProvider>
+          <Router>
           <div>
             <Drawer open={ this.state.drawerOpen } zDepth={ 4 }>
               <AppBar title="Growth Shares" zDepth={ 2 }
@@ -305,8 +312,16 @@ class App extends Component {
                 titleStyle={{ fontSize: '20px', fontWeight: 'bold' }}
               >
               </AppBar>
-              <MenuItem style={{ fontWeight: 'bold' }}>Revenue Growth</MenuItem>
-              <MenuItem style={{ fontWeight: 'bold' }}>Full Ticker List</MenuItem>
+              <Link style={{ color: 'black', textDecoration: 'none' }} to="/">
+                <MenuItem style={{ fontWeight: 'bold' }}>
+                  Revenue Growth
+                </MenuItem>
+              </Link>
+              <Link style={{ color: 'black', textDecoration: 'none' }}to="/full_ticker_list">
+                <MenuItem style={{ fontWeight: 'bold' }}>
+                  Full Ticker List
+                </MenuItem>
+              </Link>
             </Drawer>
             <Paper zDepth={ 2 } >
               <AppBar title="Growth Shares"
@@ -316,9 +331,13 @@ class App extends Component {
                 >
               </AppBar>
             </Paper>
-            {/* <TickerListTable></TickerListTable> */}
-            <RevenueGrowthTable></RevenueGrowthTable>
+              <Switch>
+                <Route path="/" exact component={RevenueGrowthTable}></Route>
+                <Route path="/revenue_growth" component={RevenueGrowthTable}></Route>
+                <Route path="/full_ticker_list" component={TickerListTable}></Route>
+              </Switch>
           </div>
+          </Router>
         </MuiThemeProvider>
       </div>
     );
