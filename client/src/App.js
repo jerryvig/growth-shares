@@ -357,8 +357,7 @@ class App extends Component {
                     hintText="Enter symbol, name, or keyword"
                     dataSource={this.state.autoCompleteDataSource}
                     textFieldStyle={{ width: '200%', backgroundColor: 'white', fontWeight:'bold'}}
-                    style={{ margin: 'auto' }} >
-                  </AutoComplete>
+                    style={{ margin: 'auto' }} />
               } >
             </AppBar>
             <Switch>
