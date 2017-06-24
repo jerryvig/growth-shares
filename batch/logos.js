@@ -15,7 +15,7 @@ const TYPE_FILE_EXTENSIONS = {
 var logosByTicker = [];
 
 function getHrTimeDiffMilliseconds(startTime, endTime) {
-    return (endTime[0] - startTime[0])*1000 + (endTime[1] - startTime[1])/1e6;
+    return (endTime[0] - startTime[0]) * 1000 + (endTime[1] - startTime[1])/1e6;
 }
 
 function writeLogoFile(logo_filename, data) {
@@ -84,7 +84,7 @@ function fetchLogos() {
 	return new Promise((resolve, reject) => {
 		if (logosByTicker.length === 0) {
 			resolve();
-			console.log('Finished collecting logos.');
+			console.log('Finished collecting all logos.');
 			return;
 		}
 
@@ -136,14 +136,12 @@ function loadLogoList() {
 
 function main() {
 	var startTime = process.hrtime();
-	/* loadLogoList().then(() => {
-		fetchLogos();
-	}); */
 	createLogosDatabaseSchema()
 		.then(loadLogoList)
 		.then(fetchLogos)
 		.then(() => {
-			console.log('done');
+			var endTime = process.hrtime();
+			console.log('Process completed in %d ms.', getHrTimeDiffMilliseconds(starTime, endTime));
 		});
 }
 
