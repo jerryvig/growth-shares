@@ -180,12 +180,33 @@ class TickerListRow extends Component {
     };
   }
 
+  getLogo(index) {
+    if (index % 7 === 1) {
+      return '/images/logos/AMZN.svg'; 
+    } else if (index % 7 === 2) {
+      return 'images/logos/FB.svg';
+    } else if (index % 7 === 3){
+      return 'images/logos/GOOG.svg';
+    } else if (index % 7 === 4) {
+      return 'images/logos/NFLX.svg';
+    } else if (index % 7 == 5) {
+      return 'images/logos/AAPL.svg';
+    } else if (index % 7 == 6) {
+      return 'images/logos/MSFT.svg';
+    } else {
+      return 'images/logos/EBAY.svg';
+    }
+  }
+
   render() {
     let row = this.props.row;
     return (
       <TableRow key={ row.index }>
         <TableRowColumn style={ this.textStyle }>
           {row.index}
+        </TableRowColumn>
+        <TableRowColumn>
+          <img src={ this.getLogo(row.index) } height="50px"></img>
         </TableRowColumn>
         <TableRowColumn style={ this.textStyle }>
           {row.ticker}
@@ -247,6 +268,7 @@ class TickerListTable extends Component {
             <TableHeader enableSelectAll={ false } displaySelectAll={ false } adjustForCheckbox={ false }>
               <TableRow>
                 <TableHeaderColumn style={ this.headerStyle }>#</TableHeaderColumn>
+                <TableHeaderColumn style={ this.headerStyle }>Logo</TableHeaderColumn>
                 <TableHeaderColumn style={ this.headerStyle }>Ticker</TableHeaderColumn>
                 <TableHeaderColumn style={ this.headerStyle }>Company Name</TableHeaderColumn>
                 <TableHeaderColumn style={ this.headerStyle }>Exchange</TableHeaderColumn>
