@@ -3,6 +3,7 @@ const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 
 const LOGOS_LINKS_PATH = 'batch/logo_links.csv';
+const LOGOS_BASE_PATH = 'batch/';
 const DB_FILE_PATH = 'morningstar_data.sqlite3';
 const TYPE_FILE_EXTENSIONS = {
 	'image/svg+xml': 'svg',
@@ -17,6 +18,35 @@ function getHrTimeDiffMilliseconds(startTime, endTime) {
     return (endTime[0] - startTime[0])*1000 + (endTime[1] - startTime[1])/1e6;
 }
 
+function writeLogoFile(logo_filename, data) {
+	return new Promise((resolve, reject) => {
+		var fullLogoFilename = LOGOS_BASE_PATH + logo_filename;
+		fs.unlink(fullLogoFilename, () => {
+			fs.writeFile(fullLogoFilename, data, () => {
+				console.log('Wrote logo file %s.', logo_filename);
+				resolve();
+			});
+		});
+	});
+}
+
+function insertLogoRecord(symbol, logo_filename, url) {
+	return new Promise((resolve, reject) => {
+ 		var db = new sqlite3.Database(DB_FILE_PATH, () => {
+		db.run('BEGIN');
+		var stmt = db.prepare('INSERT INTO logos_by_ticker VALUES (?, ?, ?)');
+			stmt.run(symbol, logo_filename, url);
+			stmt.finalize(() => {
+				db.run('COMMIT', () => {
+					db.close();
+					console.log(`Inserted record for ${symbol}.`);
+					resolve();
+				});
+			});
+		});
+ 	});
+}
+
 function getNextLogo(symbol, url) {
 	return new Promise((resolve, reject) => {
 		console.log('Fetching logo for ticker %s.', symbol);
@@ -27,7 +57,7 @@ function getNextLogo(symbol, url) {
 				res.resume();
 				return;
 			}
-			
+
 			var contentType = response.headers['content-type'];
 			var rawData = '';
 			response.on('data', (chunk) => {
@@ -42,18 +72,9 @@ function getNextLogo(symbol, url) {
 				var extension = TYPE_FILE_EXTENSIONS[contentType];
 				var logo_filename = `${symbol}.${extension}`;
 
-				console.log('logo filename = ' + logo_filename);
-				var db = new sqlite3.Database(DB_FILE_PATH, () => {
-					db.run('BEGIN');
-					var stmt = db.prepare('INSERT INTO logos_by_ticker VALUES (?, ?, ?)');
-					stmt.run(symbol, logo_filename, url);
-					stmt.finalize(() => {
-						db.run('COMMIT', () => {
-							db.close();
-							resolve();
-						});
-					});
-				});
+				writeLogoFile(logo_filename, rawData)
+					.then(insertLogoRecord.bind(null, symbol, logo_filename, url))
+					.then(resolve);
 			});
 		});
 	});
