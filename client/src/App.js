@@ -9,6 +9,7 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import SearchBar from 'material-ui-search-bar'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import Paper from 'material-ui/Paper';
@@ -352,12 +353,12 @@ class App extends Component {
               iconStyleLeft={{ fontSize: '26px', fontWeight: 'bold', color:'white' }}
               zDepth={ 2 }
               title={
-                  <AutoComplete
-                    anchorOrigin={{ horizontal: 'left' }}
+                  <div>
+                  <SearchBar
                     hintText="Enter symbol, name, or keyword"
-                    dataSource={this.state.autoCompleteDataSource}
-                    textFieldStyle={{ width: '200%', backgroundColor: 'white', fontWeight:'bold'}}
-                    style={{ margin: 'auto' }} />
+                    style={{width: '70%', margin: 'auto', position: 'relative', top: '8px'}}
+                  />
+                  </div>
               } >
             </AppBar>
             <Switch>
