@@ -3,7 +3,7 @@ const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 
 const LOGOS_LINKS_PATH = 'batch/logo_links.csv';
-const LOGOS_BASE_PATH = 'batch/';
+const LOGOS_BASE_PATH = 'batch/logos/';
 const DB_FILE_PATH = 'morningstar_data.sqlite3';
 const TYPE_FILE_EXTENSIONS = {
 	'image/svg+xml': 'svg',
