@@ -304,6 +304,10 @@ class App extends Component {
       this.setState({ drawerOpen: !this.state.drawerOpen }); 
     };
 
+    this.closeDrawer = () => {
+      this.setState({ drawerOpen: false });
+    };
+
     this.handleUpdateInput = (value) => {
       this.setState({
         autoCompleteDataSource: [
@@ -321,19 +325,24 @@ class App extends Component {
         <MuiThemeProvider>
           <Router>
           <div>
-            <Drawer open={ this.state.drawerOpen } zDepth={ 4 }>
+            <Drawer 
+              open={ this.state.drawerOpen }
+              zDepth={ 4 } 
+              docked={ false }
+              onRequestChange={ this.closeDrawer }
+              >
               <AppBar title="Growth Shares" zDepth={ 2 }
                 onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
                 titleStyle={{ fontSize: '20px', fontWeight: 'bold' }}
               >
               </AppBar>
               <Link style={{ color: 'black', textDecoration: 'none' }} to="/">
-                <MenuItem style={{ fontWeight: 'bold' }}>
+                <MenuItem style={{ fontWeight: 'bold' }} onTouchTap={ this.closeDrawer }>
                   Revenue Growth
                 </MenuItem>
               </Link>
               <Link style={{ color: 'black', textDecoration: 'none' }}to="/full_ticker_list">
-                <MenuItem style={{ fontWeight: 'bold' }}>
+                <MenuItem style={{ fontWeight: 'bold' }} onTouchTap={ this.closeDrawer }>
                   Full Ticker List
                 </MenuItem>
               </Link>
