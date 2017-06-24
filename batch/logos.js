@@ -90,7 +90,11 @@ function fetchLogos(resolver) {
 
 		var nextLogo = logosByTicker.shift();
 		getNextLogo(nextLogo.symbol, nextLogo.url).then(() => {
-			setTimeout(fetchLogos, 500, resolve);
+			if (resolver) {
+				setTimeout(fetchLogos, 500, resolver);
+			} else {
+				setTimeout(fetchLogos, 500, resolve);
+			}
 		});
 	});
 }
@@ -134,16 +138,16 @@ function loadLogoList() {
 	});
 }
 
-function main() {
+function main(args) {
 	var startTime = process.hrtime();
 	createLogosDatabaseSchema()
 		.then(loadLogoList)
 		.then(fetchLogos)
 		.then(() => {
 			var endTime = process.hrtime();
-			console.log('Process completed in %d ms.', getHrTimeDiffMilliseconds(starTime, endTime));
+			console.log('Process completed in %d ms.', getHrTimeDiffMilliseconds(startTime, endTime));
 		});
 }
 
 const args = process.argv;
-main(args);
+setImmediate(main, args);
