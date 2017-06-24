@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import AppBar from 'material-ui/AppBar';
+import AutoComplete from 'material-ui/AutoComplete';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Drawer from 'material-ui/Drawer';
+import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -293,10 +296,21 @@ class App extends Component {
     this.state = {
       rows: [],
       drawerOpen: false,
+      autoCompleteDataSource: [],
     };
 
     this.onAppBarLeftTouchTap = () => {
       this.setState({ drawerOpen: !this.state.drawerOpen }); 
+    };
+
+    this.handleUpdateInput = (value) => {
+      this.setState({
+        autoCompleteDataSource: [
+          value,
+          value + value,
+          value + value + value,
+        ],
+      });
     };
   }
 
@@ -323,19 +337,35 @@ class App extends Component {
                 </MenuItem>
               </Link>
             </Drawer>
-            <Paper zDepth={ 2 } >
-              <AppBar title="Growth Shares"
-                iconElementRight={ <Logged></Logged> }
-                onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
-                titleStyle={{ fontSize: '26px', fontWeight: 'bold' }}
-                >
-              </AppBar>
-            </Paper>
-              <Switch>
-                <Route path="/" exact component={RevenueGrowthTable}></Route>
-                <Route path="/revenue_growth" component={RevenueGrowthTable}></Route>
-                <Route path="/full_ticker_list" component={TickerListTable}></Route>
-              </Switch>
+            <AppBar
+              iconElementLeft={
+                  <FlatButton
+                   labelPosition="after"
+                   label="Growth Shares"
+                   icon={ <MenuIcon/> }
+                   style={{ color: 'white' }}
+                   labelStyle={{ color: 'white', fontSize: '22px', fontWeight: 'bold', textTransform: 'none'}}
+                   >
+                  </FlatButton> } 
+              iconElementRight={ <Logged></Logged> }
+              onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
+              iconStyleLeft={{ fontSize: '26px', fontWeight: 'bold', color:'white' }}
+              zDepth={ 2 }
+              title={
+                  <AutoComplete
+                    anchorOrigin={{ horizontal: 'left' }}
+                    hintText="Enter symbol, name, or keyword"
+                    dataSource={this.state.autoCompleteDataSource}
+                    textFieldStyle={{ width: '200%', backgroundColor: 'white', fontWeight:'bold'}}
+                    style={{ margin: 'auto' }} >
+                  </AutoComplete>
+              } >
+            </AppBar>
+            <Switch>
+              <Route path="/" exact component={RevenueGrowthTable}></Route>
+              <Route path="/revenue_growth" component={RevenueGrowthTable}></Route>
+              <Route path="/full_ticker_list" component={TickerListTable}></Route>
+            </Switch>
           </div>
           </Router>
         </MuiThemeProvider>
