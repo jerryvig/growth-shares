@@ -80,17 +80,17 @@ function getNextLogo(symbol, url) {
 	});
 }
 
-function fetchLogos() {
+function fetchLogos(resolver) {
 	return new Promise((resolve, reject) => {
 		if (logosByTicker.length === 0) {
-			resolve();
 			console.log('Finished collecting all logos.');
+			resolver();
 			return;
 		}
 
 		var nextLogo = logosByTicker.shift();
 		getNextLogo(nextLogo.symbol, nextLogo.url).then(() => {
-			setTimeout(fetchLogos, 500);
+			setTimeout(fetchLogos, 500, resolve);
 		});
 	});
 }
