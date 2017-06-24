@@ -23,7 +23,7 @@ function writeLogoFile(logo_filename, data) {
 		var fullLogoFilename = LOGOS_BASE_PATH + logo_filename;
 		fs.unlink(fullLogoFilename, () => {
 			fs.writeFile(fullLogoFilename, data, () => {
-				console.log('Wrote logo file %s.', logo_filename);
+				console.log('Wrote logo file %s.', fullLogoFilename);
 				resolve();
 			});
 		});
@@ -53,8 +53,8 @@ function getNextLogo(symbol, url) {
 		https.get(url, (response) => {
 			if (response.statusCode !== 200) {
 				console.log('Failed to get logo file for symbol %s with url %s.', symbol, url);
-				resolve();
 				res.resume();
+				resolve();
 				return;
 			}
 
@@ -66,12 +66,9 @@ function getNextLogo(symbol, url) {
 
 			response.on('end', () => {
 				response.resume();
-				//Need to write symbol, url, and saved filename to sqlite table.
-				// Need to determine the type of file that we saved.
 
 				var extension = TYPE_FILE_EXTENSIONS[contentType];
 				var logo_filename = `${symbol}.${extension}`;
-
 				writeLogoFile(logo_filename, rawData)
 					.then(insertLogoRecord.bind(null, symbol, logo_filename, url))
 					.then(resolve);
