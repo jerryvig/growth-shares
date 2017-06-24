@@ -73,6 +73,9 @@ function getNextLogo(symbol, url) {
 					.then(insertLogoRecord.bind(null, symbol, logo_filename, url))
 					.then(resolve);
 			});
+		}).on('error', (err) => {
+			console.log('error = ' + err);
+			resolve();
 		});
 	});
 }
