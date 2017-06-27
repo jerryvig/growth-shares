@@ -122,7 +122,7 @@ function loadLogoList() {
 	return new Promise((resolve, reject) => {
 		fs.readFile(LOGOS_LINKS_PATH, 'utf8', (err, data) =>{
 			if (err) throw err;
-			
+
 			var lines = data.split('\n');
 			var tickerCount = 0;
 			for (var line of lines) {
@@ -132,7 +132,7 @@ function loadLogoList() {
 					tickerCount++;
 				}
 			}
-			console.log('Loaded %d symbols and URLs from %s', tickerCount, LOGOS_LINKS_PATH);
+			console.log('Loaded %d symbols and URLs from %s.', tickerCount, LOGOS_LINKS_PATH);
 			resolve();
 		});
 	});
