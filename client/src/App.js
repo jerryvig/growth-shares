@@ -34,7 +34,7 @@ class RevenueGrowthRow extends Component {
   constructor() {
     super();
     this.state = {};
-    
+
     this.textStyle = {
       whiteSpace: 'normal',
       wordWrap: 'break-word',
@@ -156,7 +156,7 @@ class RevenueGrowthTable extends Component {
             </TableRow>
           </TableHeader>
           <TableBody stripedRows={ false }>
-            {this.state.rows.map((row) => 
+            {this.state.rows.map((row) =>
               <RevenueGrowthRow key={ row.index } row={row}></RevenueGrowthRow>
             )}
           </TableBody>
@@ -181,20 +181,22 @@ class TickerListRow extends Component {
   }
 
   getLogo(index) {
-    if (index % 7 === 1) {
-      return '/images/logos/AMZN.svg'; 
-    } else if (index % 7 === 2) {
+    if (index % 8 === 1) {
+      return '/images/logos/AMZN.svg';
+    } else if (index % 8 === 2) {
       return 'images/logos/FB.svg';
-    } else if (index % 7 === 3){
+    } else if (index % 8 === 3){
       return 'images/logos/GOOG.svg';
-    } else if (index % 7 === 4) {
+    } else if (index % 8 === 4) {
       return 'images/logos/NFLX.svg';
-    } else if (index % 7 == 5) {
+    } else if (index % 8 == 5) {
       return 'images/logos/AAPL.svg';
-    } else if (index % 7 == 6) {
+    } else if (index % 8 == 6) {
       return 'images/logos/MSFT.svg';
-    } else {
+    } else if (index % 8 == 7) {
       return 'images/logos/EBAY.svg';
+    } else {
+      return 'images/logos/INTC.svg';
     }
   }
 
@@ -275,7 +277,7 @@ class TickerListTable extends Component {
               </TableRow>
             </TableHeader>
           <TableBody>
-            {this.state.rows.map((row) => 
+            {this.state.rows.map((row) =>
               <TickerListRow key={ row.index } row={row}></TickerListRow>
             )}
           </TableBody>
@@ -323,7 +325,7 @@ class App extends Component {
     };
 
     this.onAppBarLeftTouchTap = () => {
-      this.setState({ drawerOpen: !this.state.drawerOpen }); 
+      this.setState({ drawerOpen: !this.state.drawerOpen });
     };
 
     this.closeDrawer = () => {
@@ -347,9 +349,9 @@ class App extends Component {
         <MuiThemeProvider>
           <Router>
           <div>
-            <Drawer 
+            <Drawer
               open={ this.state.drawerOpen }
-              zDepth={ 4 } 
+              zDepth={ 4 }
               docked={ false }
               onRequestChange={ this.closeDrawer }
               >
@@ -378,7 +380,7 @@ class App extends Component {
                    style={{ color: 'white' }}
                    labelStyle={{ color: 'white', fontSize: '22px', fontWeight: 'bold', textTransform: 'none'}}
                    >
-                  </FlatButton> } 
+                  </FlatButton> }
               iconElementRight={ <Logged></Logged> }
               onLeftIconButtonTouchTap={ this.onAppBarLeftTouchTap }
               iconStyleLeft={{ fontSize: '26px', fontWeight: 'bold', color:'white' }}

@@ -20,6 +20,8 @@
     "stats-lite": "^2.0.4"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
     "nodemon": "^1.11.0"
   }
 }

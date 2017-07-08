@@ -1,6 +1,7 @@
-const https = require('https');
-const fs = require('fs');
-const sqlite3 = require('sqlite3').verbose();
+// Run from command line using babel-node with "node_modules/babel-cli/bin/babel-node.js batch/logos.js".
+import * as https from 'https';
+import * as fs from 'fs';
+import * as sqlite3 from 'sqlite3';
 
 const LOGOS_LINKS_PATH = 'batch/logo_links.csv';
 const LOGOS_BASE_PATH = 'batch/logos/';
@@ -12,13 +13,13 @@ const TYPE_FILE_EXTENSIONS = {
 	'image/gif': 'gif'
 };
 
-var logosByTicker = [];
+let logosByTicker = [];
 
-function getHrTimeDiffMilliseconds(startTime, endTime) {
+const getHrTimeDiffMilliseconds = (startTime, endTime) => {
     return (endTime[0] - startTime[0]) * 1000 + (endTime[1] - startTime[1])/1e6;
-}
+};
 
-function writeLogoFile(logo_filename, data) {
+const writeLogoFile = (logo_filename, data) => {
 	return new Promise((resolve, reject) => {
 		var fullLogoFilename = LOGOS_BASE_PATH + logo_filename;
 		fs.unlink(fullLogoFilename, () => {
@@ -28,9 +29,9 @@ function writeLogoFile(logo_filename, data) {
 			});
 		});
 	});
-}
+};
 
-function insertLogoRecord(symbol, logo_filename, url) {
+const insertLogoRecord = (symbol, logo_filename, url) => {
 	return new Promise((resolve, reject) => {
  		var db = new sqlite3.Database(DB_FILE_PATH, () => {
 		db.run('BEGIN');
@@ -45,9 +46,9 @@ function insertLogoRecord(symbol, logo_filename, url) {
 			});
 		});
  	});
-}
+};
 
-function getNextLogo(symbol, url) {
+const getNextLogo = (symbol, url) => {
 	return new Promise((resolve, reject) => {
 		console.log('Fetching logo for ticker %s.', symbol);
 		https.get(url, (response) => {
@@ -58,8 +59,8 @@ function getNextLogo(symbol, url) {
 				return;
 			}
 
-			var contentType = response.headers['content-type'];
-			var rawData = '';
+			let contentType = response.headers['content-type'];
+			let rawData = '';
 			response.on('data', (chunk) => {
 				rawData += chunk;
 			});
@@ -67,8 +68,8 @@ function getNextLogo(symbol, url) {
 			response.on('end', () => {
 				response.resume();
 
-				var extension = TYPE_FILE_EXTENSIONS[contentType];
-				var logo_filename = `${symbol}.${extension}`;
+				let extension = TYPE_FILE_EXTENSIONS[contentType];
+				let logo_filename = `${symbol}.${extension}`;
 				writeLogoFile(logo_filename, rawData)
 					.then(insertLogoRecord.bind(null, symbol, logo_filename, url))
 					.then(resolve);
@@ -78,9 +79,9 @@ function getNextLogo(symbol, url) {
 			resolve();
 		});
 	});
-}
+};
 
-function fetchLogos(resolver) {
+const fetchLogos = (resolver) => {
 	return new Promise((resolve, reject) => {
 		if (logosByTicker.length === 0) {
 			console.log('Finished collecting all logos.');
@@ -88,7 +89,7 @@ function fetchLogos(resolver) {
 			return;
 		}
 
-		var nextLogo = logosByTicker.shift();
+		let nextLogo = logosByTicker.shift();
 		getNextLogo(nextLogo.symbol, nextLogo.url).then(() => {
 			if (resolver) {
 				setTimeout(fetchLogos, 500, resolver);
@@ -97,9 +98,9 @@ function fetchLogos(resolver) {
 			}
 		});
 	});
-}
+};
 
-function createLogosDatabaseSchema() {
+const createLogosDatabaseSchema = ()  => {
 	return new Promise((resolve, reject) => {
 		var start = process.hrtime();
 		var db = new sqlite3.Database(DB_FILE_PATH, () => {
@@ -116,9 +117,9 @@ function createLogosDatabaseSchema() {
 			});
 		});
 	});
-}
+};
 
-function loadLogoList() {
+const loadLogoList = () => {
 	return new Promise((resolve, reject) => {
 		fs.readFile(LOGOS_LINKS_PATH, 'utf8', (err, data) =>{
 			if (err) throw err;
@@ -136,7 +137,7 @@ function loadLogoList() {
 			resolve();
 		});
 	});
-}
+};
 
 function main(args) {
 	var startTime = process.hrtime();
