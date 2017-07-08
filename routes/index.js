@@ -10,7 +10,7 @@ const getHrTimeDiffMilliseconds  = (startTime, endTime) => {
     return (endTime[0] - startTime[0])*1e3 + (endTime[1] - startTime[1])/1e6;
 };
 
-function fetchTickersListFromDb(response) {
+const fetchTickersListFromDb = (response) => {
     var tickerRows = [];
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
@@ -30,17 +30,17 @@ function fetchTickersListFromDb(response) {
         response.json(tickerRows);
         //response.render('ticker_list', {'title': 'AMEX Ticker List', 'tickerRows': tickerRows});
     });
-}
+};
 
-function getPercentageString(value) {
+const getPercentageString = (value) => {
     return (value *100).toFixed(2) + '%';
-}
+};
 
-function fetchRevenueGrowthStats(response) {
+const fetchRevenueGrowthStats = (response) => {
     var growthStats = [];
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
-    db.all('SELECT * FROM revenue_growth_stats WHERE mean!=0 ORDER BY sharpe_ratio DESC',
+    db.all('SELECT * FROM revenue_growth_stats WHERE mean!=0 ORDER BY cum_growth DESC',
         (error, rows) => {
             
         for (var i=0; i<rows.length; i++) {
@@ -63,7 +63,7 @@ function fetchRevenueGrowthStats(response) {
         /*response.render('growth_statistics', {'title': 'Revenue Growth Statistics',
             'growthStats': growthStats}); */
     });
-}
+};
 
 function computeRevenueGrowth(request, response, next) {
     var start = process.hrtime();
