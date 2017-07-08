@@ -301,7 +301,7 @@ const getHrTimeDiffMilliseconds = (startTime, endTime) => {
 
 const initializeDatabase = () => {
     var startTime = process.hrtime();
-    var ddl_statments = [
+    const ddl_statments = [
         'DROP TABLE IF EXISTS years',
         'DROP TABLE IF EXISTS revenue',
         'DROP TABLE IF EXISTS ticker_list',
@@ -335,7 +335,7 @@ const initializeDatabase = () => {
 
 const loadTickerLists = () => {
     return new Promise((resolve, reject) => {
-        var tickerLoader = new TickerListLoader(['amex'], resolve);
+        var tickerLoader = new TickerListLoader(['nasdaq'], resolve);
         tickerLoader.getNextExchange();
     });
 };
