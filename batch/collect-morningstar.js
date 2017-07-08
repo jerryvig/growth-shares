@@ -1,6 +1,7 @@
-const http = require('http');
-const htmlparser = require('htmlparser2');
-const sqlite3 = require('sqlite3').verbose();
+// Run with babel-node from command line with "node_modules/babel-cli/bin/babel-node.js batch/collect-morningstar.js"
+import * as http from 'http';
+import * as htmlparser from 'htmlparser2';
+import * as sqlite3 from 'sqlite3';
 
 const MORNINGSTAR_BASE_URL = 'http://financials.morningstar.com/ajax/' +
     'ReportProcess4HtmlAjax.html?&t=';
@@ -161,7 +162,7 @@ MorningstarCollector.prototype.readTickersFromDatabase = function() {
 		var db = new sqlite3.Database(DB_FILE_NAME);
 		db.all('SELECT DISTINCT ticker FROM ticker_list ORDER BY ticker ASC', (err, rows) => {
 			var ticker_count = 0;
-			for (row of rows) {
+			for (const row of rows) {
 				ticker_count++;
 				this.tickers.push(row.ticker);
 			}
@@ -173,14 +174,14 @@ MorningstarCollector.prototype.readTickersFromDatabase = function() {
 	});
 };
 
-function loadMorningstarData() {
+const loadMorningstarData = () => {
 	return new Promise((resolver, rejector) => {
 		console.log('Instantiating MorningstarCollector.');
 		var morningstarCollector = new MorningstarCollector(resolver);
 		morningstarCollector.readTickersFromDatabase()
 			.then(morningstarCollector.getNextTicker.bind(morningstarCollector));
 	});
-}
+};
 
 function TickerListLoader(exchanges, resolver) {
 	this.tickerRows = [];
@@ -229,7 +230,7 @@ TickerListLoader.prototype.checkNoBadStrs = function(tickerString) {
 TickerListLoader.prototype.handleResponseEnd = function(rawData) {
     console.log('Processing nasdaq response end event. Appending tickers.');
     var lines = this.rawData.split('\n');
-    for (var line of lines) {
+    for (const line of lines) {
         var cols = line.split(',');
         var ticker = cols[0].replace(/"/g, '').trim();
         var companyName = '';
@@ -274,7 +275,7 @@ TickerListLoader.prototype.getNextExchange = function() {
     console.log('Clearing ticker list row data.');
     this.rawData = '';
     this.tickerRows = [];
-	var nextExchange = this.exchanges.shift();
+	let nextExchange = this.exchanges.shift();
     this.currentExchange = nextExchange;
 	if (nextExchange === undefined) {
 		console.log('Finished loading %s tickers for %s exchanges.', this.tickerCount, this.exchangeCount);
@@ -294,11 +295,11 @@ TickerListLoader.prototype.getNextExchange = function() {
 	this.exchangeCount++;
 };
 
-function getHrTimeDiffMilliseconds(startTime, endTime) {
+const getHrTimeDiffMilliseconds = (startTime, endTime) => {
     return (endTime[0] - startTime[0])*1000 + (endTime[1] - startTime[1])/1e6;
-}
+};
 
-function initializeDatabase() {
+const initializeDatabase = () => {
     var startTime = process.hrtime();
     var ddl_statments = [
         'DROP TABLE IF EXISTS years',
@@ -311,10 +312,10 @@ function initializeDatabase() {
         'CREATE INDEX revenue_ticker_index ON revenue (ticker)'
     ];
     console.log('Opening database %s for initialization.', DB_FILE_NAME);
-    var db = new sqlite3.Database(DB_FILE_NAME);
+    const db = new sqlite3.Database(DB_FILE_NAME);
     db.run('BEGIN');
     return new Promise((resolve, reject) => {
-        function runNextStatment() {
+        const runNextStatment = () => {
             var nextStmt = ddl_statments.shift();
             if (nextStmt === undefined) {
                 db.run('COMMIT');
@@ -327,17 +328,17 @@ function initializeDatabase() {
             }
             console.log(`Running SQL statement: "${nextStmt}".`);
             db.run(nextStmt, runNextStatment);
-        }
+        };
         runNextStatment();
     });
-}
+};
 
-function loadTickerLists() {
+const loadTickerLists = () => {
     return new Promise((resolve, reject) => {
         var tickerLoader = new TickerListLoader(['amex'], resolve);
         tickerLoader.getNextExchange();
     });
-}
+};
 
 function main(args) {
     var startTime = process.hrtime();
@@ -358,4 +359,4 @@ function main(args) {
 }
 
 const args = process.argv;
-main(args);
+setImmediate(main, args);
