@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const sqlite3 = require('sqlite3').verbose();
-const stats = require('stats-lite');
+import express from 'express';
+import sqlite3 from 'sqlite3';
+import stats from 'stats-lite';
 
+const router = express.Router();
 const PAGE_TITLE = 'Growth Shares';
 const DB_FILE_NAME = 'morningstar_data.sqlite3';
 
