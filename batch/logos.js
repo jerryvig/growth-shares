@@ -21,7 +21,7 @@ const getHrTimeDiffMilliseconds = (startTime, endTime) => {
 
 const writeLogoFile = (logo_filename, data) => {
 	return new Promise((resolve, reject) => {
-		var fullLogoFilename = LOGOS_BASE_PATH + logo_filename;
+		let fullLogoFilename = LOGOS_BASE_PATH + logo_filename;
 		fs.unlink(fullLogoFilename, () => {
 			fs.writeFile(fullLogoFilename, data, () => {
 				console.log('Wrote logo file %s.', fullLogoFilename);
@@ -33,9 +33,9 @@ const writeLogoFile = (logo_filename, data) => {
 
 const insertLogoRecord = (symbol, logo_filename, url) => {
 	return new Promise((resolve, reject) => {
- 		var db = new sqlite3.Database(DB_FILE_PATH, () => {
+ 		let db = new sqlite3.Database(DB_FILE_PATH, () => {
 		db.run('BEGIN');
-		var stmt = db.prepare('INSERT INTO logos_by_ticker VALUES (?, ?, ?)');
+		let stmt = db.prepare('INSERT INTO logos_by_ticker VALUES (?, ?, ?)');
 			stmt.run(symbol, logo_filename, url);
 			stmt.finalize(() => {
 				db.run('COMMIT', () => {
@@ -102,14 +102,14 @@ const fetchLogos = (resolver) => {
 
 const createLogosDatabaseSchema = ()  => {
 	return new Promise((resolve, reject) => {
-		var start = process.hrtime();
-		var db = new sqlite3.Database(DB_FILE_PATH, () => {
+		let start = process.hrtime();
+		let db = new sqlite3.Database(DB_FILE_PATH, () => {
 			db.run('BEGIN');
 			db.run('DROP TABLE IF EXISTS logos_by_ticker', () => {
 				db.run('CREATE TABLE logos_by_ticker ( ticker TEXT, logo_filename TEXT, logo_url TEXT )', () => {
 					db.run('COMMIT', () => {
 						db.close();
-						var end = process.hrtime();
+						let end = process.hrtime();
 						console.log('Finished creating logo schemas in %d ms.', getHrTimeDiffMilliseconds(start, end));
 						resolve();
 					});
@@ -124,10 +124,10 @@ const loadLogoList = () => {
 		fs.readFile(LOGOS_LINKS_PATH, 'utf8', (err, data) =>{
 			if (err) throw err;
 
-			var lines = data.split('\n');
-			var tickerCount = 0;
-			for (var line of lines) {
-				var parts = line.split(',')
+			let lines = data.split('\n');
+			let tickerCount = 0;
+			for (let line of lines) {
+				let parts = line.split(',')
 				if (parts.length > 1) {
 					logosByTicker.push({'symbol': parts[0].trim(), 'url': parts[1].trim()});
 					tickerCount++;
@@ -140,12 +140,12 @@ const loadLogoList = () => {
 };
 
 function main(args) {
-	var startTime = process.hrtime();
+	let startTime = process.hrtime();
 	createLogosDatabaseSchema()
 		.then(loadLogoList)
 		.then(fetchLogos)
 		.then(() => {
-			var endTime = process.hrtime();
+			let endTime = process.hrtime();
 			console.log('Process completed in %d ms.', getHrTimeDiffMilliseconds(startTime, endTime));
 		});
 }
