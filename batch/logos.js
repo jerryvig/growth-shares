@@ -3,6 +3,7 @@ import * as https from 'https';
 import * as fs from 'fs';
 import * as sqlite3 from 'sqlite3';
 
+
 const LOGOS_LINKS_PATH = 'batch/logo_links.csv';
 const LOGOS_BASE_PATH = 'batch/logos/';
 const DB_FILE_PATH = 'morningstar_data.sqlite3';
