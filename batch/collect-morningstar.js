@@ -2,6 +2,7 @@
 import * as http from 'http';
 import * as htmlparser from 'htmlparser2';
 import * as sqlite3 from 'sqlite3';
+import * as mysql from 'mysql';
 
 const MORNINGSTAR_BASE_URL = 'http://financials.morningstar.com/ajax/' +
     'ReportProcess4HtmlAjax.html?&t=';
@@ -330,6 +331,21 @@ const initializeDatabase = () => {
             db.run(nextStmt, runNextStatment);
         };
         runNextStatment();
+    });
+};
+
+const getDbConnection = () => {
+    return new Promise((resolve, reject) => {
+        setImmediate(() => {
+            let connection = mysql.createConnection({
+                host: 'localhost',
+                user: 'root',
+                database: 'growth_shares'
+            });
+            connection.connect();
+            db = connection;
+            resolve();
+        });
     });
 };
 

@@ -140,13 +140,12 @@ const createLogosDatabaseSchema = ()  => {
 const getDbConnection = () => {
 	return new Promise((resolve, reject) => {
 		setImmediate(() => {
-            let connection = mysql.createConnection({
+            db = mysql.createConnection({
                 host: 'localhost',
                 user: 'root',
                 database: 'growth_shares'
             });
-            connection.connect();
-            db = connection;
+            db.connect();
             resolve();
         });
 	});
