@@ -13,6 +13,8 @@ const YEARS = ['Y_1', 'Y_2', 'Y_3', 'Y_4', 'Y_5', 'Y_6'];
 const EXCHANGES = ['nasdaq', 'nyse', 'amex'];
 const DB_FILE_NAME = 'morningstar_data.sqlite3';
 
+let db = null;
+
 function ResultParser() {
     this.currentYear = null;
     this.years = {};
@@ -337,13 +339,12 @@ const initializeDatabase = () => {
 const getDbConnection = () => {
     return new Promise((resolve, reject) => {
         setImmediate(() => {
-            let connection = mysql.createConnection({
+            let db = mysql.createConnection({
                 host: 'localhost',
                 user: 'root',
                 database: 'growth_shares'
             });
-            connection.connect();
-            db = connection;
+            db.connect();
             resolve();
         });
     });
@@ -363,6 +364,7 @@ function main(args) {
         .then(loadTickerLists)
         .then(loadMorningstarData)
         .then(() => {
+            db.end();
             var endTime = process.hrtime();
             console.log('Morningstar data collection completed in %f s.', getHrTimeDiffMilliseconds(startTime, endTime)/1000);
         });
