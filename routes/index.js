@@ -14,13 +14,14 @@ const fetchTickersListFromDb = (response) => {
     var tickerRows = [];
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
-    db.all('SELECT DISTINCT ticker, company_name, exchange FROM ticker_list ORDER BY ticker ASC', (err, rows) => {
+    db.all('SELECT DISTINCT ticker, company_name, exchange, logo_filename FROM (SELECT t1.*, t2.logo_filename FROM ticker_list t1 LEFT OUTER JOIN logos_by_ticker t2 ON t1.ticker=t2.ticker)', (err, rows) => {
         for (var i=0; i<rows.length; i++) {
             tickerRows.push({
                 'index': i+1,
                 'ticker': rows[i].ticker,
                 'companyName': rows[i].company_name,
-                'exchange': rows[i].exchange.charAt(0).toUpperCase() + rows[i].exchange.slice(1)
+                'exchange': rows[i].exchange.charAt(0).toUpperCase() + rows[i].exchange.slice(1),
+                'logo': rows[i].logo_filename !== null ? rows[i].logo_filename : undefined
             });
         }
         db.close();
@@ -40,7 +41,7 @@ const fetchRevenueGrowthStats = (response) => {
     var growthStats = [];
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
-    db.all('SELECT * FROM revenue_growth_stats WHERE mean!=0 ORDER BY cum_growth DESC',
+    db.all('SELECT DISTINCT t1.*, t2.logo_filename FROM revenue_growth_stats t1 LEFT OUTER JOIN logos_by_ticker t2 ON t2.ticker=t1.ticker WHERE mean!=0 ORDER BY sharpe_ratio DESC',
         (error, rows) => {
             
         for (var i=0; i<rows.length; i++) {
@@ -54,7 +55,8 @@ const fetchRevenueGrowthStats = (response) => {
                 'stdev': getPercentageString(rows[i].stdev),
                 'geomean': getPercentageString(rows[i].geomean),
                 'cum_growth': getPercentageString(rows[i].cum_growth),
-                'sharpe_ratio': rows[i].sharpe_ratio.toFixed(3)
+                'sharpe_ratio': rows[i].sharpe_ratio.toFixed(3),
+                'logo': rows[i].logo_filename !== null ? rows[i].logo_filename : undefined
             });
         }
         db.close();

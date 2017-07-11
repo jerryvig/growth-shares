@@ -58,6 +58,9 @@ class RevenueGrowthRow extends Component {
         <TableRowColumn style={ this.textStyle }>
           { row.ticker }
         </TableRowColumn>
+        <TableRowColumn width={250}>
+          <img src={ 'images/logos/' + row.logo }></img>
+        </TableRowColumn>
         <TableRowColumn style={ this.textStyle }>
           { row.companyName }
         </TableRowColumn>
@@ -97,7 +100,17 @@ class RevenueGrowthTable extends Component {
       textAlign: 'left',
       color: 'black',
       fontWeight: 'bold',
-      fontSize: 'medium',
+      fontSize: 'medium'
+    };
+
+    this.logoHeaderStyle = {
+        whiteSpace: 'normal',
+        wordWrap: 'break-word',
+        textAlign: 'left',
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: 'medium',
+        minWidth: '250px'
     };
 
     this.cardStyle = {
@@ -131,6 +144,9 @@ class RevenueGrowthTable extends Component {
             <TableRow>
               <TableHeaderColumn style={ this.headerStyle }>
                 Ticker
+              </TableHeaderColumn>
+                <TableHeaderColumn style={ this.headerStyle } width={250}>
+                  Logo
               </TableHeaderColumn>
               <TableHeaderColumn style={ this.headerStyle }>
                 Company Name
@@ -180,26 +196,6 @@ class TickerListRow extends Component {
     };
   }
 
-  getLogo(index) {
-    if (index % 8 === 1) {
-      return '/images/logos/AMZN.svg';
-    } else if (index % 8 === 2) {
-      return 'images/logos/FB.svg';
-    } else if (index % 8 === 3){
-      return 'images/logos/GOOG.svg';
-    } else if (index % 8 === 4) {
-      return 'images/logos/NFLX.svg';
-    } else if (index % 8 == 5) {
-      return 'images/logos/AAPL.svg';
-    } else if (index % 8 == 6) {
-      return 'images/logos/MSFT.svg';
-    } else if (index % 8 == 7) {
-      return 'images/logos/EBAY.svg';
-    } else {
-      return 'images/logos/INTC.svg';
-    }
-  }
-
   render() {
     let row = this.props.row;
     return (
@@ -208,7 +204,7 @@ class TickerListRow extends Component {
           {row.index}
         </TableRowColumn>
         <TableRowColumn>
-          <img src={ this.getLogo(row.index) } height="50px"></img>
+          <img src={ 'images/logos/' + row.logo } height="50px"></img>
         </TableRowColumn>
         <TableRowColumn style={ this.textStyle }>
           {row.ticker}
