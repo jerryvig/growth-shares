@@ -180,7 +180,7 @@ MorningstarCollector.prototype.readTickersFromDatabase = function() {
 const loadMorningstarData = () => {
 	return new Promise((resolver, rejector) => {
 		console.log('Instantiating MorningstarCollector.');
-		let morningstarCollector = new MorningstarCollector(resolver);
+		var morningstarCollector = new MorningstarCollector(resolver);
 		morningstarCollector.readTickersFromDatabase()
 			.then(morningstarCollector.getNextTicker.bind(morningstarCollector));
 	});
@@ -352,7 +352,7 @@ const getDbConnection = () => {
 
 const loadTickerLists = () => {
     return new Promise((resolve, reject) => {
-        var tickerLoader = new TickerListLoader(['amex'], resolve);
+        let tickerLoader = new TickerListLoader(['amex'], resolve);
         tickerLoader.getNextExchange();
     });
 };
@@ -362,7 +362,7 @@ function main(args) {
     //getDbConnection().then(initializeDatabase)
     getDbConnection()
         .then(loadTickerLists)
-        .then(loadMorningstarData)
+        // .then(loadMorningstarData)
         .then(() => {
             db.end();
             var endTime = process.hrtime();
