@@ -1,8 +1,7 @@
 // Run from command line using babel-node with "node_modules/babel-cli/bin/babel-node.js batch/logos.js".
 import * as https from 'https';
 import * as fs from 'fs';
-import * as sqlite3 from 'sqlite3';
-
+import * as mysql from 'mysql';
 
 const LOGOS_LINKS_PATH = 'batch/logo_links.csv';
 const LOGOS_BASE_PATH = 'batch/logos/';
@@ -15,6 +14,7 @@ const TYPE_FILE_EXTENSIONS = {
 };
 
 let logosByTicker = [];
+let db = null;
 
 const getHrTimeDiffMilliseconds = (startTime, endTime) => {
     return (endTime[0] - startTime[0]) * 1000 + (endTime[1] - startTime[1])/1e6;
@@ -34,18 +34,25 @@ const writeLogoFile = (logo_filename, data) => {
 
 const insertLogoRecord = (symbol, logo_filename, url) => {
 	return new Promise((resolve, reject) => {
- 		let db = new sqlite3.Database(DB_FILE_PATH, () => {
-		db.run('BEGIN');
-		let stmt = db.prepare('INSERT INTO logos_by_ticker VALUES (?, ?, ?)');
-			stmt.run(symbol, logo_filename, url);
-			stmt.finalize(() => {
-				db.run('COMMIT', () => {
-					db.close();
-					console.log(`Inserted record for ${symbol}.`);
+        db.beginTransaction((err) => {
+            if (err) {
+                throw err;
+            }
+            db.query('INSERT INTO logos_by_ticker VALUES (?, ?, ?)', [symbol, logo_filename, url], (err) => {
+            	if (err) {
+            		throw err;
+            	}
+
+				db.commit((err) => {
+					if (err) {
+						throw err;
+					}
+
+					console.log('Inserted record for symbol %s.', symbol);
 					resolve();
 				});
 			});
-		});
+        });
  	});
 };
 
@@ -104,19 +111,45 @@ const fetchLogos = (resolver) => {
 const createLogosDatabaseSchema = ()  => {
 	return new Promise((resolve, reject) => {
 		let start = process.hrtime();
-		let db = new sqlite3.Database(DB_FILE_PATH, () => {
-			db.run('BEGIN');
-			db.run('DROP TABLE IF EXISTS logos_by_ticker', () => {
-				db.run('CREATE TABLE logos_by_ticker ( ticker TEXT, logo_filename TEXT, logo_url TEXT )', () => {
-					db.run('COMMIT', () => {
-						db.close();
-						let end = process.hrtime();
-						console.log('Finished creating logo schemas in %d ms.', getHrTimeDiffMilliseconds(start, end));
-						resolve();
-					});
+		db.beginTransaction((err) => {
+			if (err) {
+				throw err;
+			}
+			db.query('DROP TABLE IF EXISTS logos_by_ticker', (err) => {
+				if (err) {
+					throw err;
+                }
+                db.query('CREATE TABLE logos_by_ticker ( ticker TEXT, logo_filename TEXT, logo_url TEXT )', () => {
+                	if (err) {
+                		throw err;
+                    }
+                	db.commit((err) => {
+                		if (err) {
+                			throw err;
+						}
+
+                        let end = process.hrtime();
+                        console.log('Finished creating logo schemas in %d ms.', getHrTimeDiffMilliseconds(start, end));
+                        resolve();
+					})
 				});
 			});
 		});
+	});
+};
+
+const getDbConnection = () => {
+	return new Promise((resolve, reject) => {
+		setImmediate(() => {
+            let connection = mysql.createConnection({
+                host: 'localhost',
+                user: 'root',
+                database: 'growth_shares'
+            });
+            connection.connect();
+            db = connection;
+            resolve();
+        });
 	});
 };
 
@@ -141,13 +174,15 @@ const loadLogoList = () => {
 };
 
 function main(args) {
-	let startTime = process.hrtime();
-	createLogosDatabaseSchema()
+    let startTime = process.hrtime();
+	getDbConnection()
+		.then(createLogosDatabaseSchema)
 		.then(loadLogoList)
 		.then(fetchLogos)
 		.then(() => {
-			let endTime = process.hrtime();
-			console.log('Process completed in %d ms.', getHrTimeDiffMilliseconds(startTime, endTime));
+			db.end();
+            let endTime = process.hrtime();
+            console.log('Process completed in %d ms.', getHrTimeDiffMilliseconds(startTime, endTime));
 		});
 }
 
