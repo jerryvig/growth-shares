@@ -5,7 +5,6 @@ import * as mysql from 'mysql';
 
 const LOGOS_LINKS_PATH = 'batch/logo_links.csv';
 const LOGOS_BASE_PATH = 'batch/logos/';
-const DB_FILE_PATH = 'morningstar_data.sqlite3';
 const TYPE_FILE_EXTENSIONS = {
 	'image/svg+xml': 'svg',
 	'image/png': 'png',
