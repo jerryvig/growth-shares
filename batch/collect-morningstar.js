@@ -178,7 +178,7 @@ MorningstarCollector.prototype.readTickersFromDatabase = function() {
 const loadMorningstarData = () => {
 	return new Promise((resolver, rejector) => {
 		console.log('Instantiating MorningstarCollector.');
-		var morningstarCollector = new MorningstarCollector(resolver);
+		let morningstarCollector = new MorningstarCollector(resolver);
 		morningstarCollector.readTickersFromDatabase()
 			.then(morningstarCollector.getNextTicker.bind(morningstarCollector));
 	});
@@ -351,14 +351,15 @@ const getDbConnection = () => {
 
 const loadTickerLists = () => {
     return new Promise((resolve, reject) => {
-        var tickerLoader = new TickerListLoader(['nasdaq'], resolve);
+        var tickerLoader = new TickerListLoader(['amex'], resolve);
         tickerLoader.getNextExchange();
     });
 };
 
 function main(args) {
     var startTime = process.hrtime();
-    initializeDatabase()
+    //getDbConnection().then(initializeDatabase)
+    getDbConnection()
         .then(loadTickerLists)
         .then(loadMorningstarData)
         .then(() => {
