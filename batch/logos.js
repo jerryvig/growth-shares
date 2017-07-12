@@ -23,7 +23,7 @@ const writeLogoFile = (logo_filename, data) => {
 	return new Promise((resolve, reject) => {
 		let fullLogoFilename = LOGOS_BASE_PATH + logo_filename;
 		fs.unlink(fullLogoFilename, () => {
-			fs.writeFile(fullLogoFilename, data, () => {
+			fs.writeFile(fullLogoFilename, data, 'binary', () => {
 				console.log('Wrote logo file %s.', fullLogoFilename);
 				resolve();
 			});
@@ -67,6 +67,7 @@ const getNextLogo = (symbol, url) => {
 			}
 
 			let contentType = response.headers['content-type'];
+			response.setEncoding('binary');
 			let rawData = '';
 			response.on('data', (chunk) => {
 				rawData += chunk;
