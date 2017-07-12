@@ -41,7 +41,7 @@ const fetchRevenueGrowthStats = (response) => {
     var growthStats = [];
     var start = process.hrtime();
     var db = new sqlite3.Database(DB_FILE_NAME);
-    db.all('SELECT DISTINCT t1.*, t2.logo_filename FROM revenue_growth_stats t1 LEFT OUTER JOIN logos_by_ticker t2 ON t2.ticker=t1.ticker WHERE mean!=0 ORDER BY cum_growth DESC',
+    db.all('SELECT DISTINCT t1.*, t2.logo_filename FROM revenue_growth_stats t1 LEFT OUTER JOIN logos_by_ticker t2 ON t2.ticker=t1.ticker WHERE mean!=0 ORDER BY sharpe_ratio DESC',
         (error, rows) => {
             
         for (var i=0; i<rows.length; i++) {
