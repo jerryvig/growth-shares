@@ -59,7 +59,7 @@ class RevenueGrowthRow extends Component {
           { row.ticker }
         </TableRowColumn>
         <TableRowColumn width={250}>
-          <img src={ 'images/logos/' + row.logo }></img>
+          <img src={ 'images/logos/' + row.logo } height="50"></img>
         </TableRowColumn>
         <TableRowColumn style={ this.textStyle }>
           { row.companyName }
